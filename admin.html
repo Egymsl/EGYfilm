@@ -1,130 +1,332 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة التحكم - EGYfilm</title>
-  <style>
-    body { font-family: sans-serif; background-color: #121212; color: #fff; padding: 20px; }
-    .form-container { background: #1e1e1e; padding: 20px; border-radius: 8px; max-width: 500px; margin: 0 auto 20px auto; }
-    input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #333; box-sizing: border-box; background: #2a2a2a; color: #fff; }
-    button { background-color: #e50914; font-weight: bold; cursor: pointer; border: none; font-size: 16px; }
-    .movie-card { background: #1e1e1e; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; border: 1px solid #333; }
-    .movie-card img { width: 50px; height: 75px; object-fit: cover; border-radius: 4px; }
-    .movie-info { flex-grow: 1; }
-    .edit-btn { background-color: #007bff; width: auto; padding: 6px 15px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EGYfilm | لوحة التحكم والإدارة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #E50914;
+            --bg: #0A0B0E;
+            --card-bg: #14161D;
+            --text-main: #FFFFFF;
+            --text-sub: #A0A5B5;
+            --accent-glow: rgba(229, 9, 20, 0.35);
+        }
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            color: var(--text-main);
+        }
+
+        header h1 span {
+            color: var(--red);
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+
+        .form-container h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--red);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: #0A0B0E;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .movies-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .movie-card {
+            background: var(--card-bg);
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .movie-card img {
+            width: 50px;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .movie-info {
+            flex-grow: 1;
+        }
+
+        .movie-info h4 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .movie-info p {
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: none;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .btn-edit { background-color: #007bff; }
+        .btn-delete { background-color: #dc3545; }
+
+        .empty-msg {
+            text-align: center;
+            color: var(--text-sub);
+            padding: 30px;
+        }
+    </style>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-  <div class="form-container">
-    <h2>إدارة المحتوى 🎬</h2>
-    <input type="text" id="titleInput" placeholder="اسم الفيلم / المسلسل">
-    <input type="text" id="posterInput" placeholder="رابط البوستر (.jpg / .png)">
-    <input type="text" id="videoUrlInput" placeholder="رابط الفيديو (Embed URL)">
-    
-    <!-- قائمة اختيار القسم -->
-    <select id="categoryInput">
-      <option value="arabic-movie">فيلم عربي</option>
-      <option value="english-movie">فيلم أجنبي</option>
-      <option value="arabic-series">مسلسل عربي</option>
-      <option value="english-series">مسلسل أجنبي</option>
-    </select>
-    
-    <button id="saveBtn" onclick="saveFilm()">إضافة المحتوى ➕</button>
-  </div>
+    <header>
+        <h1>EGY<span>FILM</span> - لوحة التحكم</h1>
+    </header>
 
-  <h3>المحتوى المضاف:</h3>
-  <div id="moviesList">جاري التحميل...</div>
+    <div class="form-container">
+        <h2 id="formTitle">إضافة محتوى جديد 🎬</h2>
+        
+        <div class="input-group">
+            <label>عنوان الفيلم / المسلسل</label>
+            <input type="text" id="titleInput" placeholder="أدخل العنوان هنا...">
+        </div>
 
-  <script>
-    // ⚠️ حط بيانات الفايربيس بتاعتك أنت هنا عشان يقرأ الأفلام القديمة!
-    const firebaseConfig = {
-      apiKey: "ضع_الـ_API_KEY_بتاعك",
-      authDomain: "ضع_الـ_AUTH_DOMAIN_بتاعك",
-      projectId: "ضع_الـ_PROJECT_ID_بتاعك",
-      storageBucket: "ضع_الـ_STORAGE_BUCKET_بتاعك",
-      messagingSenderId: "ضع_الـ_MESSAGING_SENDER_ID_بتاعك",
-      appId: "ضع_الـ_APP_ID_بتاعك"
-    };
+        <div class="input-group">
+            <label>رابط البوستر المباشر (.jpg / .png)</label>
+            <input type="text" id="posterInput" placeholder="https://image.tmdb.org/t/p/w500/...">
+        </div>
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    const db = firebase.firestore();
+        <div class="input-group">
+            <label>رابط المشغل / الفيديو المباشر</label>
+            <input type="text" id="videoUrlInput" placeholder="رابط المشغل...">
+        </div>
 
-    let editingFilmId = null;
+        <div class="input-group">
+            <label>نوع المحتوى والتصنيف</label>
+            <select id="categoryInput">
+                <option value="movie-ar">فيلم عربي 🇪🇬</option>
+                <option value="movie-en">فيلم أجنبي 🎬</option>
+                <option value="series-ar">مسلسل عربي 📺</option>
+                <option value="series-en">مسلسل أجنبي 🌎</option>
+            </select>
+        </div>
 
-    function loadMovies() {
-      db.collection('movies').onSnapshot((snapshot) => {
-        const listContainer = document.getElementById('moviesList');
-        listContainer.innerHTML = '';
+        <button id="saveBtn" class="btn-submit" onclick="saveFilm()">إضافة المحتوى ➕</button>
+    </div>
 
-        if (snapshot.empty) {
-          listContainer.innerHTML = '<p>لا توجد أفلام مضافة بعد.</p>';
-          return;
+    <h3>المحتوى المضاف حالياً:</h3>
+    <div class="movies-list" id="moviesList">
+        <p class="empty-msg">جاري تحميل المحتوى من الفايربيس...</p>
+    </div>
+
+    <script>
+        // مفاتيح الـ Firebase الخاصة بموقعك
+        const firebaseConfig = {
+          apiKey: "AIzaSyC2g1Gf-xfNJqyEwTjGThiWBwNMcx421hU",
+          authDomain: "egyfilm-f3cdd.firebaseapp.com",
+          projectId: "egyfilm-f3cdd",
+          storageBucket: "egyfilm-f3cdd.firebasestorage.app",
+          messagingSenderId: "370903201028",
+          appId: "1:370903201028:web:ef0d107d7308ca489b0c51"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let editingFilmId = null;
+
+        // جلب البيانات وإظهارها فوراً
+        function loadMovies() {
+            db.collection("movies").onSnapshot((snapshot) => {
+                const listContainer = document.getElementById('moviesList');
+                listContainer.innerHTML = '';
+
+                if (snapshot.empty) {
+                    listContainer.innerHTML = '<p class="empty-msg">لا يوجد محتوى مضاف حتى الآن.</p>';
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const item = doc.data();
+                    const isSeries = item.type === 'series' || (item.category && item.category.startsWith('series'));
+                    const categoryText = getCategoryText(item.category, isSeries);
+
+                    listContainer.innerHTML += `
+                        <div class="movie-card">
+                            <img src="${item.poster}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/50x75/14161D/FFFFFF?text=No+Img'">
+                            <div class="movie-info">
+                                <h4>${item.title || 'بدون عنوان'}</h4>
+                                <p>${categoryText}</p>
+                            </div>
+                            <div class="actions">
+                                <button class="btn-action btn-edit" onclick="prepareEdit('${doc.id}', \`${item.title || ''}\`, \`${item.poster || ''}\`, \`${item.videoUrl || ''}\`, '${item.category || 'movie-ar'}')">✏️ تعديل</button>
+                                <button class="btn-action btn-delete" onclick="deleteFilm('${doc.id}')">🗑️ حذف</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
         }
 
-        snapshot.forEach((doc) => {
-          const movie = doc.data();
-          listContainer.innerHTML += `
-            <div class="movie-card">
-              <img src="${movie.poster}" alt="${movie.title}">
-              <div class="movie-info">
-                <h4>${movie.title}</h4>
-                <small style="color: #aaa;">القسم: ${movie.category || 'غير محدد'}</small>
-              </div>
-              <button class="edit-btn" onclick="prepareEdit('${doc.id}', '${movie.title}', '${movie.poster}', '${movie.videoUrl}', '${movie.category || 'arabic-movie'}')">✏️ تعديل</button>
-            </div>
-          `;
-        });
-      }, (error) => {
-        document.getElementById('moviesList').innerHTML = '<p style="color: red;">خطأ في الاتصال بالفايربيس! تأكد من مفاتيح firebaseConfig.</p>';
-      });
-    }
+        function getCategoryText(cat, isSeries) {
+            if (cat === 'movie-ar') return 'فيلم عربي';
+            if (cat === 'movie-en') return 'فيلم أجنبي';
+            if (cat === 'series-ar') return 'مسلسل عربي';
+            if (cat === 'series-en') return 'مسلسل أجنبي';
+            return isSeries ? 'مسلسل' : 'فيلم';
+        }
 
-    function prepareEdit(id, title, poster, videoUrl, category) {
-      document.getElementById('titleInput').value = title;
-      document.getElementById('posterInput').value = poster;
-      document.getElementById('videoUrlInput').value = videoUrl;
-      document.getElementById('categoryInput').value = category;
+        // تجهيز الخانات للتعديل
+        function prepareEdit(id, title, poster, videoUrl, category) {
+            document.getElementById('titleInput').value = title;
+            document.getElementById('posterInput').value = poster;
+            document.getElementById('videoUrlInput').value = videoUrl;
+            document.getElementById('categoryInput').value = category || 'movie-ar';
 
-      editingFilmId = id;
-      document.getElementById('saveBtn').innerText = "تحديث البيانات 🔄";
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+            editingFilmId = id;
+            document.getElementById('formTitle').innerText = "تعديل المحتوى ✏️";
+            document.getElementById('saveBtn').innerText = "تحديث البيانات 🔄";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-    async function saveFilm() {
-      const title = document.getElementById('titleInput').value;
-      const poster = document.getElementById('posterInput').value;
-      const videoUrl = document.getElementById('videoUrlInput').value;
-      const category = document.getElementById('categoryInput').value;
+        // حفظ أو تحديث
+        async function saveFilm() {
+            const title = document.getElementById('titleInput').value.trim();
+            const poster = document.getElementById('posterInput').value.trim();
+            const videoUrl = document.getElementById('videoUrlInput').value.trim();
+            const category = document.getElementById('categoryInput').value;
+            const type = category.startsWith('series') ? 'series' : 'movie';
 
-      if (!title || !poster || !videoUrl) {
-        alert("يرجى ملء كافة الخانات!");
-        return;
-      }
+            if (!title || !poster || !videoUrl) {
+                alert("يرجى ملء كافة الخانات المطلوبة!");
+                return;
+            }
 
-      if (editingFilmId) {
-        await db.collection('movies').doc(editingFilmId).update({ title, poster, videoUrl, category });
-        alert("تم تحديث البيانات بنجاح! ✅");
-        editingFilmId = null;
-        document.getElementById('saveBtn').innerText = "إضافة المحتوى ➕";
-      } else {
-        await db.collection('movies').add({ title, poster, videoUrl, category });
-        alert("تم إضافة المحتوى بنجاح! 🎉");
-      }
+            if (editingFilmId) {
+                await db.collection('movies').doc(editingFilmId).update({
+                    title, poster, videoUrl, category, type
+                });
+                alert("تم تحديث البيانات والبوستر بنجاح! ✅");
+                editingFilmId = null;
+                document.getElementById('formTitle').innerText = "إضافة محتوى جديد 🎬";
+                document.getElementById('saveBtn').innerText = "إضافة المحتوى ➕";
+            } else {
+                await db.collection('movies').add({
+                    title, poster, videoUrl, category, type
+                });
+                alert("تمت إضافة المحتوى بنجاح! 🎉");
+            }
 
-      document.getElementById('titleInput').value = '';
-      document.getElementById('posterInput').value = '';
-      document.getElementById('videoUrlInput').value = '';
-    }
+            // مسح الخانات
+            document.getElementById('titleInput').value = '';
+            document.getElementById('posterInput').value = '';
+            document.getElementById('videoUrlInput').value = '';
+        }
 
-    loadMovies();
-  </script>
+        // حذف محتوى
+        async function deleteFilm(id) {
+            if (confirm("هل أنت تأكد من ترغبتك في حذف هذا المحتوى؟")) {
+                await db.collection('movies').doc(id).delete();
+                alert("تم الحذف بنجاح! 🗑️");
+            }
+        }
+
+        // تشغيل التحميل
+        loadMovies();
+    </script>
 </body>
 </html>
