@@ -1,75 +1,122 @@
-<script>
-  let editingFilmId = null; // متغير بيعرفنا هل بنضيف جديد ولا بنعدل
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - EGYfilm</title>
+  <style>
+    body { font-family: sans-serif; background-color: #121212; color: #fff; padding: 20px; }
+    .form-container { background: #1e1e1e; padding: 20px; border-radius: 8px; max-width: 500px; margin: 0 auto 20px auto; }
+    input, select, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #333; box-sizing: border-box; }
+    button { background-color: #e50914; color: white; font-weight: bold; cursor: pointer; border: none; }
+    .movie-card { background: #1e1e1e; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+    .movie-card img { width: 50px; height: 75px; object-fit: cover; border-radius: 4px; }
+    .movie-info { flex-grow: 1; }
+    .edit-btn { background-color: #007bff; width: auto; padding: 5px 15px; }
+  </style>
 
-  // 1. دالة لجلب الأفلام وعرضها في لوحة التحكم مع زرار التعديل والحذف
-  function loadMovies() {
-    db.collection('movies').onSnapshot((snapshot) => {
-      const listContainer = document.getElementById('moviesList'); // تأكد إن عندك div بالـ ID ده
-      listContainer.innerHTML = '';
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
 
-      snapshot.forEach((doc) => {
-        const movie = doc.data();
-        listContainer.innerHTML += `
-          <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0; display: flex; align-items: center; gap: 10px;">
-            <img src="${movie.poster}" width="60" style="border-radius: 5px;">
-            <div style="flex-grow: 1;">
-              <h4>${movie.title}</h4>
+  <div class="form-container">
+    <h2>إدارة الأفلام 🎬</h2>
+    <input type="text" id="titleInput" placeholder="اسم الفيلم">
+    <input type="text" id="posterInput" placeholder="رابط البوستر (.jpg / .png)">
+    <input type="text" id="videoUrlInput" placeholder="رابط الفيديو (Embed URL)">
+    
+    <button id="saveBtn" onclick="saveFilm()">إضافة فيلم ➕</button>
+  </div>
+
+  <h3>الأفلام المضافة:</h3>
+  <div id="moviesList">جاري التحميل...</div>
+
+  <script>
+    // ⚠️ ضع إعدادات Firebase الخاصة بك هنا
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // تهيئة الفايربيس
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    let editingFilmId = null;
+
+    // جلب الأفلام وعرضها
+    function loadMovies() {
+      db.collection('movies').onSnapshot((snapshot) => {
+        const listContainer = document.getElementById('moviesList');
+        listContainer.innerHTML = '';
+
+        if (snapshot.empty) {
+          listContainer.innerHTML = '<p>لا توجد أفلام مضافة بعد.</p>';
+          return;
+        }
+
+        snapshot.forEach((doc) => {
+          const movie = doc.data();
+          listContainer.innerHTML += `
+            <div class="movie-card">
+              <img src="${movie.poster}" alt="${movie.title}">
+              <div class="movie-info">
+                <h4>${movie.title}</h4>
+              </div>
+              <button class="edit-btn" onclick="prepareEdit('${doc.id}', '${movie.title}', '${movie.poster}', '${movie.videoUrl}')">✏️ تعديل</button>
             </div>
-            <!-- زرار التعديل اللي بيملى الخانات فوق -->
-            <button onclick="prepareEdit('${doc.id}', '${movie.title}', '${movie.poster}', '${movie.videoUrl}')">✏️ تعديل</button>
-          </div>
-        `;
+          `;
+        });
       });
-    });
-  }
-
-  // 2. دالة الضغط على زر التعديل (بتنزل البيانات في الخانات فوق)
-  function prepareEdit(id, title, poster, videoUrl) {
-    document.getElementById('titleInput').value = title;
-    document.getElementById('posterInput').value = poster;
-    document.getElementById('videoUrlInput').value = videoUrl;
-
-    editingFilmId = id; // بنحفظ رقم الفيلم
-    document.getElementById('saveBtn').innerText = "تحديث البيانات 🔄"; // بنغير اسم الزرار
-  }
-
-  // 3. دالة الحفظ (بتعرف أوتوماتيك هل هتضيف جديد ولا هتعدل)
-  async function saveFilm() {
-    const title = document.getElementById('titleInput').value;
-    const poster = document.getElementById('posterInput').value;
-    const videoUrl = document.getElementById('videoUrlInput').value;
-
-    if (!title || !poster || !videoUrl) {
-      alert("تأكد من ملء كل الخانات!");
-      return;
     }
 
-    if (editingFilmId) {
-      // لو فيه ID محفوظة -> تعديل فيلم قديم
-      await db.collection('movies').doc(editingFilmId).update({
-        title: title,
-        poster: poster,
-        videoUrl: videoUrl
-      });
-      alert("تم تحديث البوستر/البيانات بنجاح! ✅");
-      editingFilmId = null; // نرجع الوضع لإضافة جديد
-      document.getElementById('saveBtn').innerText = "إضافة فيلم ➕";
-    } else {
-      // لو مفيش ID -> إضافة فيلم جديد
-      await db.collection('movies').add({
-        title: title,
-        poster: poster,
-        videoUrl: videoUrl
-      });
-      alert("تمت إضافة الفيلم بنجاح! 🎉");
+    // تجهيز التعديل
+    function prepareEdit(id, title, poster, videoUrl) {
+      document.getElementById('titleInput').value = title;
+      document.getElementById('posterInput').value = poster;
+      document.getElementById('videoUrlInput').value = videoUrl;
+
+      editingFilmId = id;
+      document.getElementById('saveBtn').innerText = "تحديث البيانات 🔄";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // تفريغ الخانات
-    document.getElementById('titleInput').value = '';
-    document.getElementById('posterInput').value = '';
-    document.getElementById('videoUrlInput').value = '';
-  }
+    // حفظ أو تحديث
+    async function saveFilm() {
+      const title = document.getElementById('titleInput').value;
+      const poster = document.getElementById('posterInput').value;
+      const videoUrl = document.getElementById('videoUrlInput').value;
 
-  // تشغيل عرض الأفلام أوتوماتيك
-  loadMovies();
-</script>
+      if (!title || !poster || !videoUrl) {
+        alert("يرجى ملء كافة الخانات!");
+        return;
+      }
+
+      if (editingFilmId) {
+        await db.collection('movies').doc(editingFilmId).update({ title, poster, videoUrl });
+        alert("تم تحديث الفيلم بنجاح! ✅");
+        editingFilmId = null;
+        document.getElementById('saveBtn').innerText = "إضافة فيلم ➕";
+      } else {
+        await db.collection('movies').add({ title, poster, videoUrl });
+        alert("تم إضافة الفيلم بنجاح! 🎉");
+      }
+
+      document.getElementById('titleInput').value = '';
+      document.getElementById('posterInput').value = '';
+      document.getElementById('videoUrlInput').value = '';
+    }
+
+    // تشغيل جلب الأفلام عند فتح الصفحة
+    loadMovies();
+  </script>
+</body>
+</html>
