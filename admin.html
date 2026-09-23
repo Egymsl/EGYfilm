@@ -7,12 +7,12 @@
   <style>
     body { font-family: sans-serif; background-color: #121212; color: #fff; padding: 20px; }
     .form-container { background: #1e1e1e; padding: 20px; border-radius: 8px; max-width: 500px; margin: 0 auto 20px auto; }
-    input, select, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #333; box-sizing: border-box; }
-    button { background-color: #e50914; color: white; font-weight: bold; cursor: pointer; border: none; }
-    .movie-card { background: #1e1e1e; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+    input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #333; box-sizing: border-box; background: #2a2a2a; color: #fff; }
+    button { background-color: #e50914; font-weight: bold; cursor: pointer; border: none; font-size: 16px; }
+    .movie-card { background: #1e1e1e; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; border: 1px solid #333; }
     .movie-card img { width: 50px; height: 75px; object-fit: cover; border-radius: 4px; }
     .movie-info { flex-grow: 1; }
-    .edit-btn { background-color: #007bff; width: auto; padding: 5px 15px; }
+    .edit-btn { background-color: #007bff; width: auto; padding: 6px 15px; }
   </style>
 
   <!-- Firebase SDKs -->
@@ -22,29 +22,36 @@
 <body>
 
   <div class="form-container">
-    <h2>إدارة الأفلام 🎬</h2>
-    <input type="text" id="titleInput" placeholder="اسم الفيلم">
+    <h2>إدارة المحتوى 🎬</h2>
+    <input type="text" id="titleInput" placeholder="اسم الفيلم / المسلسل">
     <input type="text" id="posterInput" placeholder="رابط البوستر (.jpg / .png)">
     <input type="text" id="videoUrlInput" placeholder="رابط الفيديو (Embed URL)">
     
-    <button id="saveBtn" onclick="saveFilm()">إضافة فيلم ➕</button>
+    <!-- قائمة اختيار القسم -->
+    <select id="categoryInput">
+      <option value="arabic-movie">فيلم عربي</option>
+      <option value="english-movie">فيلم أجنبي</option>
+      <option value="arabic-series">مسلسل عربي</option>
+      <option value="english-series">مسلسل أجنبي</option>
+    </select>
+    
+    <button id="saveBtn" onclick="saveFilm()">إضافة المحتوى ➕</button>
   </div>
 
-  <h3>الأفلام المضافة:</h3>
+  <h3>المحتوى المضاف:</h3>
   <div id="moviesList">جاري التحميل...</div>
 
   <script>
-    // ⚠️ ضع إعدادات Firebase الخاصة بك هنا
+    // ⚠️ حط بيانات الفايربيس بتاعتك أنت هنا عشان يقرأ الأفلام القديمة!
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "ضع_الـ_API_KEY_بتاعك",
+      authDomain: "ضع_الـ_AUTH_DOMAIN_بتاعك",
+      projectId: "ضع_الـ_PROJECT_ID_بتاعك",
+      storageBucket: "ضع_الـ_STORAGE_BUCKET_بتاعك",
+      messagingSenderId: "ضع_الـ_MESSAGING_SENDER_ID_بتاعك",
+      appId: "ضع_الـ_APP_ID_بتاعك"
     };
 
-    // تهيئة الفايربيس
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
@@ -52,7 +59,6 @@
 
     let editingFilmId = null;
 
-    // جلب الأفلام وعرضها
     function loadMovies() {
       db.collection('movies').onSnapshot((snapshot) => {
         const listContainer = document.getElementById('moviesList');
@@ -70,30 +76,33 @@
               <img src="${movie.poster}" alt="${movie.title}">
               <div class="movie-info">
                 <h4>${movie.title}</h4>
+                <small style="color: #aaa;">القسم: ${movie.category || 'غير محدد'}</small>
               </div>
-              <button class="edit-btn" onclick="prepareEdit('${doc.id}', '${movie.title}', '${movie.poster}', '${movie.videoUrl}')">✏️ تعديل</button>
+              <button class="edit-btn" onclick="prepareEdit('${doc.id}', '${movie.title}', '${movie.poster}', '${movie.videoUrl}', '${movie.category || 'arabic-movie'}')">✏️ تعديل</button>
             </div>
           `;
         });
+      }, (error) => {
+        document.getElementById('moviesList').innerHTML = '<p style="color: red;">خطأ في الاتصال بالفايربيس! تأكد من مفاتيح firebaseConfig.</p>';
       });
     }
 
-    // تجهيز التعديل
-    function prepareEdit(id, title, poster, videoUrl) {
+    function prepareEdit(id, title, poster, videoUrl, category) {
       document.getElementById('titleInput').value = title;
       document.getElementById('posterInput').value = poster;
       document.getElementById('videoUrlInput').value = videoUrl;
+      document.getElementById('categoryInput').value = category;
 
       editingFilmId = id;
       document.getElementById('saveBtn').innerText = "تحديث البيانات 🔄";
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // حفظ أو تحديث
     async function saveFilm() {
       const title = document.getElementById('titleInput').value;
       const poster = document.getElementById('posterInput').value;
       const videoUrl = document.getElementById('videoUrlInput').value;
+      const category = document.getElementById('categoryInput').value;
 
       if (!title || !poster || !videoUrl) {
         alert("يرجى ملء كافة الخانات!");
@@ -101,13 +110,13 @@
       }
 
       if (editingFilmId) {
-        await db.collection('movies').doc(editingFilmId).update({ title, poster, videoUrl });
-        alert("تم تحديث الفيلم بنجاح! ✅");
+        await db.collection('movies').doc(editingFilmId).update({ title, poster, videoUrl, category });
+        alert("تم تحديث البيانات بنجاح! ✅");
         editingFilmId = null;
-        document.getElementById('saveBtn').innerText = "إضافة فيلم ➕";
+        document.getElementById('saveBtn').innerText = "إضافة المحتوى ➕";
       } else {
-        await db.collection('movies').add({ title, poster, videoUrl });
-        alert("تم إضافة الفيلم بنجاح! 🎉");
+        await db.collection('movies').add({ title, poster, videoUrl, category });
+        alert("تم إضافة المحتوى بنجاح! 🎉");
       }
 
       document.getElementById('titleInput').value = '';
@@ -115,7 +124,6 @@
       document.getElementById('videoUrlInput').value = '';
     }
 
-    // تشغيل جلب الأفلام عند فتح الصفحة
     loadMovies();
   </script>
 </body>
