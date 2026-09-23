@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم EgyFilm</title>
+    <style>
+        body { font-family: sans-serif; background-color: #141414; color: #fff; padding: 20px; text-align: center; }
+        .form-container { max-width: 400px; margin: auto; background: #222; padding: 20px; border-radius: 8px; }
+        input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 4px; border: none; box-sizing: border-box; }
+        button { background-color: #e50914; color: white; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #b81d24; }
+    </style>
+</head>
+<body>
+
+    <h2>إضافة فيلم جديد إلى EgyFilm</h2>
+
+    <div class="form-container">
+        <input type="text" id="title" placeholder="اسم الفيلم" required>
+        <input type="text" id="poster" placeholder="رابط صورة البوستر (URL)" required>
+        <input type="text" id="videoUrl" placeholder="رابط الفيلم أو سيرفر التشغيل (Embed URL)" required>
+        <button id="addBtn">حفظ وإضافة الفيلم</button>
+        <p id="status"></p>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyC2g1Gf-xfNJqyEwTjGThiWBwNMcx421hU",
+          authDomain: "egyfilm-f3cdd.firebaseapp.com",
+          projectId: "egyfilm-f3cdd",
+          storageBucket: "egyfilm-f3cdd.firebasestorage.app",
+          messagingSenderId: "370903201028",
+          appId: "1:370903201028:web:ef0d107d7308ca489b0c51"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        document.getElementById('addBtn').addEventListener('click', async () => {
+            const title = document.getElementById('title').value;
+            const poster = document.getElementById('poster').value;
+            const videoUrl = document.getElementById('videoUrl').value;
+            const status = document.getElementById('status');
+
+            if (!title || !poster || !videoUrl) {
+                status.innerText = "يرجى ملء جميع الخانات!";
+                status.style.color = "red";
+                return;
+            }
+
+            status.innerText = "جاري الحفظ...";
+            status.style.color = "yellow";
+
+            try {
+                await db.collection("movies").add({
+                    title: title,
+                    poster: poster,
+                    videoUrl: videoUrl,
+                    createdAt: new Date()
+                });
+                status.innerText = "تمت إضافة الفيلم بنجاح! 🎉";
+                status.style.color = "green";
+                document.getElementById('title').value = '';
+                document.getElementById('poster').value = '';
+                document.getElementById('videoUrl').value = '';
+            } catch (error) {
+                status.innerText = "حدث خطأ: " + error.message;
+                status.style.color = "red";
+            }
+        });
+    </script>
+</body>
+</html>
