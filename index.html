@@ -127,5 +127,45 @@ function openModal(t){document.querySelector("#modalTitle").textContent=t;docume
 function closeModal(){document.querySelector("#modal").classList.remove("show")}
 render();
 </script>
+      <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyC2g1Gf-xfNJqyEwTjGThiWBwNMcx421hU",
+          authDomain: "egyfilm-f3cdd.firebaseapp.com",
+          projectId: "egyfilm-f3cdd",
+          storageBucket: "egyfilm-f3cdd.firebasestorage.app",
+          messagingSenderId: "370903201028",
+          appId: "1:370903201028:web:ef0d107d7308ca489b0c51"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // جلب الأفلام تلقائياً من Firestore
+        db.collection("movies").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+            const container = document.getElementById('moviesContainer');
+            if(!container) return;
+            container.innerHTML = '';
+
+            if(snapshot.empty) {
+                container.innerHTML = '<p style="color:#fff;text-align:center;">لا توجد أفلام مضافة حتى الآن.</p>';
+                return;
+            }
+
+            snapshot.forEach((doc) => {
+                const movie = doc.data();
+                container.innerHTML += `
+                    <div class="movie-card" style="background:#222;border-radius:8px;overflow:hidden;text-align:center;">
+                        <img src="${movie.poster}" alt="${movie.title}" style="width:100%;height:240px;object-fit:cover;">
+                        <h3 style="color:#fff;font-size:16px;margin:10px 0;">${movie.title}</h3>
+                        <a href="${movie.videoUrl}" target="_blank" style="display:block;padding:8px;background:#e50914;color:#fff;text-decoration:none;font-weight:bold;">مشاهدة الآن</a>
+                    </div>
+                `;
+            });
+        });
+    </script>
 </body>
 </html>
