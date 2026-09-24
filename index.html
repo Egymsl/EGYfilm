@@ -1,193 +1,274 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Egymsl | ايجي مثل - عالم من الترفيه</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --red: #E50914;
-            --bg-black: #141414;
-            --card-bg: #181818;
-            --text-white: #FFFFFF;
-            --text-gray: #AAAAAA;
-            --gold: #FFD700;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO & Google Search Console Settings -->
+  <title>Egymsl — عالم الأفلام والمسلسلات والبث المباشر</title>
+  <meta name="description" content="Egymsl (ايجي مثل) - المنصة الرائدة لمشاهدة أحدث الأفلام والمسلسلات العربية والأجنبية والتركية والقنوات المباشرة بجودة عالية.">
+  <meta name="keywords" content="Egymsl, ايجي مثل, افلام, مسلسلات, بث مباشر, افلام عربية, افلام اجنبية">
+  <meta name="robots" content="index, follow">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --red: #e50914;
+      --bg: #080808;
+      --card: #151515;
+      --muted: #aaa;
+      --text: #fff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Cairo', Arial, sans-serif; padding-bottom: 40px; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    
+    /* Navigation */
+    .nav { position: fixed; z-index: 20; top: 0; left: 0; right: 0; height: 72px; padding: 0 5%; display: flex; align-items: center; gap: 28px; background: linear-gradient(#050505dd, transparent); transition: .25s; }
+    .nav.scrolled { background: #080808f2; }
+    .logo { font-size: 30px; font-weight: 900; color: var(--red); letter-spacing: -1px; text-decoration: none; }
+    .logo span { color: #fff; }
+    .links { display: flex; gap: 22px; font-size: 14px; }
+    .links a { color: #ddd; text-decoration: none; font-weight: 600; }
+    .links a:hover { color: #fff; }
+    
+    .actions { margin-right: auto; display: flex; align-items: center; gap: 12px; }
+    .search { width: 0; opacity: 0; border: 1px solid #555; background: #111; color: #fff; padding: 8px 10px; border-radius: 4px; transition: .25s; }
+    .search.open { width: 210px; opacity: 1; }
+    .icon, .profile { border: 0; background: transparent; color: #fff; font-size: 20px; }
+    .profile { width: 34px; height: 34px; border-radius: 6px; background: linear-gradient(135deg, #555, #111); }
+    
+    /* Hero Banner */
+    .hero { min-height: 520px; display: flex; align-items: center; padding: 120px 6% 60px; position: relative; overflow: hidden; background: radial-gradient(circle at 72% 38%, #8b000055 0, #0000 28%), linear-gradient(90deg, #080808 10%, #080808cc 40%, #08080822 75%, #080808 100%), url('https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1800&q=80') center/cover; }
+    .hero-content { max-width: 650px; }
+    .eyebrow { color: var(--red); font-weight: 800; letter-spacing: 1px; }
+    .hero h1 { font-size: clamp(36px, 5vw, 64px); line-height: 1.1; margin: 10px 0; }
+    .meta { display: flex; gap: 15px; color: #ddd; margin-bottom: 14px; font-size: 14px; }
+    .hero p { color: #ddd; line-height: 1.8; max-width: 600px; font-size: 15px; }
+    .btn { border: 0; border-radius: 4px; padding: 11px 22px; margin-left: 8px; font-weight: 800; }
+    .primary { background: var(--red); color: #fff; }
+    .primary:hover { background: #b81d24; }
+    .secondary { background: #555b; color: #fff; }
+    
+    /* Grid & Categories */
+    main { padding: 0 5% 60px; }
+    .section { margin-top: 30px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+    .section h2 { font-size: 22px; margin: 0; font-weight: 800; border-right: 4px solid var(--red); padding-right: 10px; }
+    
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip { border: 1px solid #444; background: #141414; color: #ddd; padding: 8px 16px; border-radius: 20px; font-weight: 600; }
+    .chip.active, .chip:hover { background: var(--red); border-color: var(--red); color: #fff; }
+    
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px; }
+    .card { position: relative; aspect-ratio: 2/3; border-radius: 6px; overflow: hidden; background: var(--card); transition: .22s; box-shadow: 0 8px 25px #0005; cursor: pointer; }
+    .card:hover { transform: scale(1.05); z-index: 2; }
+    .poster { width: 100%; height: 100%; object-fit: cover; }
+    .card-title { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, #000 0%, #0000 100%); padding: 25px 10px 10px; text-align: center; font-weight: 700; font-size: 14px; }
+    .play { position: absolute; inset: auto 10px 10px auto; width: 38px; height: 38px; border: 0; border-radius: 50%; background: var(--red); color: #fff; opacity: 0; transition: .2s; font-size: 16px; }
+    .card:hover .play { opacity: 1; }
+    .empty { padding: 45px; text-align: center; color: #aaa; grid-column: 1 / -1; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background-color: var(--bg-black); color: var(--text-white); padding-bottom: 50px; }
+    /* Modal Player */
+    .modal { position: fixed; inset: 0; background: #000d; z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal.show { display: flex; }
+    .modal-box { max-width: 850px; width: 100%; background: #171717; border-radius: 10px; overflow: hidden; position: relative; max-height: 90vh; display: flex; flex-direction: column; }
+    .modal-body { padding: 20px; overflow-y: auto; }
+    .close { position: absolute; top: 12px; left: 12px; border: 0; background: var(--red); color: #fff; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; z-index: 10; }
+    .video-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 8px; overflow: hidden; margin-top: 10px; }
+    .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .episodes-box { margin-top: 15px; background: #111; padding: 12px; border-radius: 6px; }
+    .episodes-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-height: 120px; overflow-y: auto; }
+    .ep-btn { background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+    .ep-btn.active { background: var(--red); border-color: var(--red); font-weight: bold; }
 
-        header {
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
-            padding: 18px 5%; display: flex; justify-content: space-between; align-items: center;
-            position: fixed; top: 0; left: 0; right: 0; z-index: 1000; backdrop-filter: blur(10px);
-        }
+    .footer { border-top: 1px solid #222; padding: 35px 5%; color: #777; text-align: center; }
 
-        .brand-logo { font-size: 28px; font-weight: 900; color: var(--red); text-decoration: none; }
-        .brand-logo span { color: #fff; }
-
-        .hero {
-            height: 55vh; min-height: 380px;
-            background: linear-gradient(180deg, rgba(20,20,20,0.2) 0%, var(--bg-black) 100%), 
-                        url('https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=1400') center/cover;
-            display: flex; align-items: flex-end; padding: 0 5% 30px;
-        }
-
-        .hero-title { font-size: 32px; font-weight: 900; }
-
-        .categories-nav { padding: 15px 5%; position: sticky; top: 65px; z-index: 900; background: rgba(20,20,20,0.95); }
-        .tabs { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; }
-        .tab-btn { background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; white-space: nowrap; font-weight: 700; }
-        .tab-btn.active { background: var(--red); }
-
-        main { padding: 20px 5%; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
-
-        .card { background: var(--card-bg); border-radius: 8px; overflow: hidden; cursor: pointer; position: relative; transition: 0.3s; }
-        .card:hover { transform: scale(1.05); }
-        .poster-box { position: relative; width: 100%; padding-top: 150%; background: #000; }
-        .card img { position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; }
-        .card-info { padding: 10px; text-align: center; font-weight: bold; }
-
-        /* Modal Player */
-        #playerModal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95); z-index: 2000; flex-direction: column; align-items: center; padding: 20px; overflow-y: auto;
-        }
-        .modal-box { width: 100%; max-width: 900px; }
-        .video-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; margin-top: 15px; border-radius: 8px; overflow: hidden; }
-        .video-container iframe { position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; }
-        .episodes-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; max-height: 150px; overflow-y: auto; }
-        .ep-btn { background: #333; color: #fff; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 13px; }
-        .ep-btn.active { background: var(--red); font-weight: bold; }
-        .close-btn { background: var(--red); color: #fff; border: none; padding: 6px 15px; border-radius: 4px; cursor: pointer; float: left; }
-    </style>
+    @media(max-width:700px){
+      .links { display: none; }
+      .nav { padding: 0 4%; }
+      .hero { min-height: 450px; padding: 100px 5% 40px; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <a href="#" class="brand-logo">EGY<span>MSL</span></a>
-    </header>
+<header class="nav" id="nav">
+  <a href="#" class="logo">EGY<span>MSL</span></a>
+  <nav class="links">
+    <a href="#home">الرئيسية</a>
+    <a href="#content">المكتبة</a>
+  </nav>
+  <div class="actions">
+    <input id="search" class="search" placeholder="ابحث عن فيلم أو مسلسل..." aria-label="بحث">
+    <button class="icon" id="searchBtn" title="بحث">⌕</button>
+  </div>
+</header>
 
-    <section class="hero">
-        <div>
-            <h1 class="hero-title">Egymsl | عالم المسلسلات والأفلام</h1>
-        </div>
-    </section>
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="eyebrow">EGYMSL VIP</div>
+    <h1>عالم من الترفيه المفتوح</h1>
+    <div class="meta"><span>4K Ultra HD</span><span>تحديثات يومية</span><span>أفلام ومسلسلات</span></div>
+    <p>شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مجاناً وبأعلى جودة على منصة Egymsl.</p>
+  </div>
+</section>
 
-    <div class="categories-nav">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="filterContent('all', this)">الكل</button>
-            <button class="tab-btn" onclick="filterContent('movie-ar', this)">أفلام عربية</button>
-            <button class="tab-btn" onclick="filterContent('movie-en', this)">أفلام أجنبية</button>
-            <button class="tab-btn" onclick="filterContent('series-ar', this)">مسلسلات عربية</button>
-            <button class="tab-btn" onclick="filterContent('series-en', this)">مسلسلات أجنبية</button>
-        </div>
+<main>
+  <section class="section">
+    <div class="section-head"><h2>الأقسام والتصنيفات</h2></div>
+    <div class="chips">
+      <button class="chip active" onclick="filterData('all', this)">الكل</button>
+      <button class="chip" onclick="filterData('movie-ar', this)">🇪🇬 أفلام عربية</button>
+      <button class="chip" onclick="filterData('movie-en', this)">🇺🇸 أفلام أجنبية</button>
+      <button class="chip" onclick="filterData('series-ar', this)">📺 مسلسلات عربية</button>
+      <button class="chip" onclick="filterData('series-en', this)">🌐 مسلسلات أجنبية</button>
     </div>
+  </section>
 
-    <main>
-        <div class="grid" id="contentGrid"></div>
-    </main>
-
-    <!-- Player Modal -->
-    <div id="playerModal">
-        <div class="modal-box">
-            <button class="close-btn" onclick="closePlayer()">إغلاق ✖</button>
-            <h2 id="playingTitle" style="clear:both; padding-top:10px;"></h2>
-            
-            <!-- قائمة الحلقات (تظهر فقط للمسلسلات) -->
-            <div id="episodesBox" style="display:none;">
-                <p style="margin-top:10px; color:var(--text-gray);">اختر الحلقة:</p>
-                <div class="episodes-list" id="episodesList"></div>
-            </div>
-
-            <div class="video-container">
-                <iframe id="videoIframe" src="" allowfullscreen></iframe>
-            </div>
-        </div>
+  <section class="section" id="content">
+    <div class="section-head"><h2 id="sectionTitle">المحتوى المتاح</h2></div>
+    <div class="grid" id="mainGrid">
+      <div class="empty">جاري تحميل المحتوى من قاعدة البيانات...</div>
     </div>
+  </section>
+</main>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<footer class="footer">© 2026 Egymsl — جميع الحقوق محفوظة.</footer>
 
-    <script>
-        const firebaseConfig = {
-          apiKey: "AIzaSyC2g1Gf-xfNJqyEwTjGThiWBwNMcx421hU",
-          authDomain: "egyfilm-f3cdd.firebaseapp.com",
-          projectId: "egyfilm-f3cdd",
-          storageBucket: "egyfilm-f3cdd.firebasestorage.app",
-          messagingSenderId: "370903201028",
-          appId: "1:370903201028:web:ef0d107d7308ca489b0c51"
+<!-- Player Modal -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal()">×</button>
+    <div class="modal-body">
+      <h2 id="modalTitle" style="margin:0 0 10px 0; font-size:20px;"></h2>
+      
+      <div id="episodesBox" class="episodes-box" style="display:none;">
+        <span style="font-size:13px; color:var(--muted);">اختر الحلقة / الموسم:</span>
+        <div class="episodes-list" id="episodesList"></div>
+      </div>
+
+      <div class="video-container">
+        <iframe id="videoIframe" src="" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC2g1Gf-xfNJqyEwTjGThiWBwNMcx421hU",
+    authDomain: "egyfilm-f3cdd.firebaseapp.com",
+    projectId: "egyfilm-f3cdd",
+    storageBucket: "egyfilm-f3cdd.firebasestorage.app",
+    messagingSenderId: "370903201028",
+    appId: "1:370903201028:web:ef0d107d7308ca489b0c51"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  let rawData = [];
+
+  // جلب البيانات المباشرة من الفايربيس
+  db.collection("movies").onSnapshot((snapshot) => {
+    rawData = [];
+    snapshot.forEach((doc) => rawData.push({ id: doc.id, ...doc.data() }));
+    renderCards(rawData);
+  });
+
+  function renderCards(items) {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = '';
+
+    if (items.length === 0) {
+      grid.innerHTML = '<div class="empty">لا يوجد محتوى متوفر حالياً.</div>';
+      return;
+    }
+
+    items.forEach((item) => {
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML = `
+        <img class="poster" src="${item.poster}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'">
+        <div class="card-title">${item.title}</div>
+        <button class="play">▶</button>
+      `;
+      card.onclick = () => openModal(item);
+      grid.appendChild(card);
+    });
+  }
+
+  function filterData(category, btn) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+
+    if (category === 'all') {
+      renderCards(rawData);
+    } else {
+      renderCards(rawData.filter(x => x.category === category));
+    }
+  }
+
+  function openModal(item) {
+    document.getElementById('modalTitle').textContent = item.title;
+    const epBox = document.getElementById('episodesBox');
+    const epList = document.getElementById('episodesList');
+    const iframe = document.getElementById('videoIframe');
+    
+    epList.innerHTML = '';
+
+    if (item.type === 'series' && item.episodes && item.episodes.length > 0) {
+      epBox.style.display = 'block';
+      item.episodes.forEach((ep, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'ep-btn' + (idx === 0 ? ' active' : '');
+        btn.innerText = `موسم ${ep.season} - حلقة ${ep.episode}`;
+        btn.onclick = () => {
+          document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          iframe.src = ep.url;
         };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        epList.appendChild(btn);
+      });
+      iframe.src = item.episodes[0].url;
+    } else {
+      epBox.style.display = 'none';
+      iframe.src = item.videoUrl || '';
+    }
 
-        let allData = [];
+    document.getElementById('modal').classList.add('show');
+  }
 
-        db.collection("movies").onSnapshot((snapshot) => {
-            allData = [];
-            snapshot.forEach((doc) => allData.push({ id: doc.id, ...doc.data() }));
-            renderCards(allData);
-        });
+  function closeModal() {
+    document.getElementById('videoIframe').src = '';
+    document.getElementById('modal').classList.remove('show');
+  }
 
-        function renderCards(items) {
-            const grid = document.getElementById('contentGrid');
-            grid.innerHTML = '';
-            items.forEach((item) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div class="poster-box">
-                        <img src="${item.poster}" alt="${item.title}">
-                    </div>
-                    <div class="card-info">${item.title}</div>
-                `;
-                card.onclick = () => openMedia(item);
-                grid.appendChild(card);
-            });
-        }
+  // البحث والتنقل
+  const search = document.querySelector("#search");
+  document.querySelector("#searchBtn").onclick = () => {
+    search.classList.toggle("open");
+    if (search.classList.contains("open")) search.focus();
+  };
+  search.oninput = () => {
+    const q = search.value.toLowerCase();
+    renderCards(rawData.filter(item => item.title.toLowerCase().includes(q)));
+  };
 
-        function openMedia(item) {
-            document.getElementById('playingTitle').innerText = item.title;
-            const epBox = document.getElementById('episodesBox');
-            const epList = document.getElementById('episodesList');
-            epList.innerHTML = '';
+  window.addEventListener("scroll", () => {
+    document.querySelector("#nav").classList.toggle("scrolled", window.scrollY > 40);
+  });
+</script>
 
-            if (item.type === 'series' && item.episodes && item.episodes.length > 0) {
-                epBox.style.display = 'block';
-                item.episodes.forEach((ep, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'ep-btn' + (idx === 0 ? ' active' : '');
-                    btn.innerText = `موسم ${ep.season} - حلقة ${ep.episode}`;
-                    btn.onclick = () => {
-                        document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        document.getElementById('videoIframe').src = ep.url;
-                    };
-                    epList.appendChild(btn);
-                });
-                // تشغيل أول حلقة تلقائياً
-                document.getElementById('videoIframe').src = item.episodes[0].url;
-            } else {
-                epBox.style.display = 'none';
-                document.getElementById('videoIframe').src = item.videoUrl || '';
-            }
-
-            document.getElementById('playerModal').style.display = 'flex';
-        }
-
-        function closePlayer() {
-            document.getElementById('videoIframe').src = '';
-            document.getElementById('playerModal').style.display = 'none';
-        }
-
-        function filterContent(category, btnElement) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if (btnElement) btnElement.classList.add('active');
-            if (category === 'all') renderCards(allData);
-            else renderCards(allData.filter(item => item.category === category));
-        }
-    </script>
 </body>
 </html>
