@@ -64,7 +64,7 @@
     .modal-body { padding: 20px; overflow-y: auto; }
     .close { position: absolute; top: 12px; left: 12px; border: 0; background: var(--red); color: #fff; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; z-index: 10; }
     .video-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 8px; overflow: hidden; margin-top: 10px; }
-    .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .video-container video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; outline: none; }
     .episodes-box { margin-top: 15px; background: #111; padding: 12px; border-radius: 6px; }
     .episodes-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-height: 120px; overflow-y: auto; }
     .ep-btn { background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
@@ -144,7 +144,7 @@
         <div class="episodes-list" id="episodesList"></div>
       </div>
       <div class="video-container">
-        <iframe id="videoIframe" src="" allowfullscreen></iframe>
+        <video id="videoPlayer" controls playsinline></video>
       </div>
     </div>
   </div>
@@ -377,8 +377,9 @@
     document.getElementById('modalTitle').textContent = item.title || '';
     const epBox = document.getElementById('episodesBox');
     const epList = document.getElementById('episodesList');
-    const iframe = document.getElementById('videoIframe');
+    const player = document.getElementById('videoPlayer');
     epList.innerHTML = '';
+    
     if (item.type === 'series' && item.episodes && item.episodes.length > 0) {
       epBox.style.display = 'block';
       item.episodes.forEach((ep, idx) => {
@@ -388,20 +389,23 @@
         btn.onclick = () => {
           document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          iframe.src = ep.url;
+          player.src = ep.url;
+          player.play().catch(e => console.log(e));
         };
         epList.appendChild(btn);
       });
-      iframe.src = item.episodes[0].url;
+      player.src = item.episodes[0].url;
     } else {
       epBox.style.display = 'none';
-      iframe.src = item.videoUrl || '';
+      player.src = item.videoUrl || '';
     }
     document.getElementById('modal').classList.add('show');
   }
 
   function closeModal() {
-    document.getElementById('videoIframe').src = '';
+    const player = document.getElementById('videoPlayer');
+    player.pause();
+    player.src = '';
     document.getElementById('modal').classList.remove('show');
   }
 
