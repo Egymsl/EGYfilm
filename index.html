@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- SEO & Google Search Console Settings -->
   <title>Egymsl — عالم الأفلام والمسلسلات والبث المباشر</title>
   <meta name="description" content="Egymsl (ايجي مثل) - المنصة الرائدة لمشاهدة أحدث الأفلام والمسلسلات العربية والأجنبية والتركية والقنوات المباشرة بجودة عالية.">
   <meta name="keywords" content="Egymsl, ايجي مثل, افلام, مسلسلات, بث مباشر, افلام عربية, افلام اجنبية">
@@ -40,8 +39,7 @@
     .actions { margin-right: auto; display: flex; align-items: center; gap: 12px; }
     .search { width: 0; opacity: 0; border: 1px solid #555; background: #111; color: #fff; padding: 8px 10px; border-radius: 4px; transition: .25s; }
     .search.open { width: 210px; opacity: 1; }
-    .icon, .profile { border: 0; background: transparent; color: #fff; font-size: 20px; }
-    .profile { width: 34px; height: 34px; border-radius: 6px; background: linear-gradient(135deg, #555, #111); }
+    .icon { border: 0; background: transparent; color: #fff; font-size: 20px; }
     
     /* Hero Banner */
     .hero { min-height: 520px; display: flex; align-items: center; padding: 120px 6% 60px; position: relative; overflow: hidden; background: radial-gradient(circle at 72% 38%, #8b000055 0, #0000 28%), linear-gradient(90deg, #080808 10%, #080808cc 40%, #08080822 75%, #080808 100%), url('https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1800&q=80') center/cover; }
@@ -50,14 +48,10 @@
     .hero h1 { font-size: clamp(36px, 5vw, 64px); line-height: 1.1; margin: 10px 0; }
     .meta { display: flex; gap: 15px; color: #ddd; margin-bottom: 14px; font-size: 14px; }
     .hero p { color: #ddd; line-height: 1.8; max-width: 600px; font-size: 15px; }
-    .btn { border: 0; border-radius: 4px; padding: 11px 22px; margin-left: 8px; font-weight: 800; }
-    .primary { background: var(--red); color: #fff; }
-    .primary:hover { background: #b81d24; }
-    .secondary { background: #555b; color: #fff; }
     
     /* Grid & Categories */
     main { padding: 0 5% 60px; }
-    .section { margin-top: 30px; }
+    .section { margin-top: 35px; }
     .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
     .section h2 { font-size: 22px; margin: 0; font-weight: 800; border-right: 4px solid var(--red); padding-right: 10px; }
     
@@ -70,6 +64,7 @@
     .card:hover { transform: scale(1.05); z-index: 2; }
     .poster { width: 100%; height: 100%; object-fit: cover; }
     .card-title { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, #000 0%, #0000 100%); padding: 25px 10px 10px; text-align: center; font-weight: 700; font-size: 14px; }
+    .badge-new { position: absolute; top: 8px; right: 8px; background: var(--red); padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 800; }
     .play { position: absolute; inset: auto 10px 10px auto; width: 38px; height: 38px; border: 0; border-radius: 50%; background: var(--red); color: #fff; opacity: 0; transition: .2s; font-size: 16px; }
     .card:hover .play { opacity: 1; }
     .empty { padding: 45px; text-align: center; color: #aaa; grid-column: 1 / -1; }
@@ -103,6 +98,7 @@
   <a href="#" class="logo">EGY<span>MSL</span></a>
   <nav class="links">
     <a href="#home">الرئيسية</a>
+    <a href="#recently">أحدث الإضافات</a>
     <a href="#content">المكتبة</a>
   </nav>
   <div class="actions">
@@ -121,21 +117,33 @@
 </section>
 
 <main>
+  <!-- فلترة التصنيفات واللغة -->
   <section class="section">
-    <div class="section-head"><h2>الأقسام والتصنيفات</h2></div>
+    <div class="section-head"><h2>التصنيفات واللغة</h2></div>
     <div class="chips">
-      <button class="chip active" onclick="filterData('all', this)">الكل</button>
-      <button class="chip" onclick="filterData('movie-ar', this)">🇪🇬 أفلام عربية</button>
-      <button class="chip" onclick="filterData('movie-en', this)">🇺🇸 أفلام أجنبية</button>
-      <button class="chip" onclick="filterData('series-ar', this)">📺 مسلسلات عربية</button>
-      <button class="chip" onclick="filterData('series-en', this)">🌐 مسلسلات أجنبية</button>
+      <button class="chip active" onclick="filterCategory('all', this)">الكل</button>
+      <button class="chip" onclick="filterCategory('movie', this)">🎬 أفلام</button>
+      <button class="chip" onclick="filterCategory('series', this)">📺 مسلسلات</button>
+      <span style="border-left: 1px solid #444; margin: 0 4px;"></span>
+      <button class="chip" onclick="filterLang('all', this)">🌐 كل اللغات</button>
+      <button class="chip" onclick="filterLang('ar', this)">🇪🇬 عربي</button>
+      <button class="chip" onclick="filterLang('en', this)">🇺🇸 English</button>
     </div>
   </section>
 
+  <!-- خانة أحدث الإضافات -->
+  <section class="section" id="recently">
+    <div class="section-head"><h2>🆕 أحدث الإضافات</h2></div>
+    <div class="grid" id="recentlyGrid">
+      <div class="empty">جاري تحميل أحدث الأجزاء...</div>
+    </div>
+  </section>
+
+  <!-- خانة باقي المكتبة -->
   <section class="section" id="content">
-    <div class="section-head"><h2 id="sectionTitle">المحتوى المتاح</h2></div>
+    <div class="section-head"><h2 id="sectionTitle">كل المحتوى</h2></div>
     <div class="grid" id="mainGrid">
-      <div class="empty">جاري تحميل المحتوى من قاعدة البيانات...</div>
+      <div class="empty">جاري تحميل المحتوى...</div>
     </div>
   </section>
 </main>
@@ -150,7 +158,7 @@
       <h2 id="modalTitle" style="margin:0 0 10px 0; font-size:20px;"></h2>
       
       <div id="episodesBox" class="episodes-box" style="display:none;">
-        <span style="font-size:13px; color:var(--muted);">اختر الحلقة / الموسم:</span>
+        <span style="font-size:13px; color:var(--muted);">اختر الحلقة / الموسم / الجزء:</span>
         <div class="episodes-list" id="episodesList"></div>
       </div>
 
@@ -178,20 +186,22 @@
   const db = firebase.firestore();
 
   let rawData = [];
+  let currentCategory = 'all';
+  let currentLang = 'all';
 
-  // جلب البيانات المباشرة من الفايربيس
+  // جلب البيانات حية من الفايربيس
   db.collection("movies").onSnapshot((snapshot) => {
     rawData = [];
     snapshot.forEach((doc) => rawData.push({ id: doc.id, ...doc.data() }));
-    renderCards(rawData);
+    applyFilters();
   });
 
-  function renderCards(items) {
-    const grid = document.getElementById('mainGrid');
+  function renderGrid(containerId, items, showBadge = false) {
+    const grid = document.getElementById(containerId);
     grid.innerHTML = '';
 
     if (items.length === 0) {
-      grid.innerHTML = '<div class="empty">لا يوجد محتوى متوفر حالياً.</div>';
+      grid.innerHTML = '<div class="empty">لا يوجد محتوى متوفر.</div>';
       return;
     }
 
@@ -200,6 +210,7 @@
       card.className = 'card';
       card.innerHTML = `
         <img class="poster" src="${item.poster}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'">
+        ${showBadge ? '<span class="badge-new">جديد</span>' : ''}
         <div class="card-title">${item.title}</div>
         <button class="play">▶</button>
       `;
@@ -208,15 +219,50 @@
     });
   }
 
-  function filterData(category, btn) {
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    if(btn) btn.classList.add('active');
+  function applyFilters() {
+    const query = document.getElementById("search").value.trim().toLowerCase();
+    
+    let filtered = rawData;
 
-    if (category === 'all') {
-      renderCards(rawData);
-    } else {
-      renderCards(rawData.filter(x => x.category === category));
+    // فلترة الأقسام
+    if (currentCategory !== 'all') {
+      filtered = filtered.filter(x => x.type === currentCategory || x.category === currentCategory);
     }
+
+    // فلترة اللغة (عربي / انجليزي)
+    if (currentLang !== 'all') {
+      filtered = filtered.filter(x => x.lang === currentLang || (x.category && x.category.includes(currentLang)));
+    }
+
+    // فلترة البحث
+    if (query !== '') {
+      filtered = filtered.filter(x => x.title && x.title.toLowerCase().includes(query));
+    }
+
+    // عرض أحدث 6 عناصر في قسم "أحدث الإضافات"
+    const recentItems = [...filtered].reverse().slice(0, 6);
+    renderGrid('recentlyGrid', recentItems, true);
+
+    // عرض الكل في المكتبة
+    renderGrid('mainGrid', filtered);
+  }
+
+  function filterCategory(cat, btn) {
+    document.querySelectorAll('.chip').forEach(c => {
+      if(c.innerText.includes('أفلام') || c.innerText.includes('مسلسلات') || c.innerText === 'الكل') c.classList.remove('active');
+    });
+    if(btn) btn.classList.add('active');
+    currentCategory = cat;
+    applyFilters();
+  }
+
+  function filterLang(lang, btn) {
+    document.querySelectorAll('.chip').forEach(c => {
+      if(c.innerText.includes('لغات') || c.innerText.includes('عربي') || c.innerText.includes('English')) c.classList.remove('active');
+    });
+    if(btn) btn.classList.add('active');
+    currentLang = lang;
+    applyFilters();
   }
 
   function openModal(item) {
@@ -255,15 +301,13 @@
   }
 
   // البحث والتنقل
-  const search = document.querySelector("#search");
+  const searchInput = document.querySelector("#search");
   document.querySelector("#searchBtn").onclick = () => {
-    search.classList.toggle("open");
-    if (search.classList.contains("open")) search.focus();
+    searchInput.classList.toggle("open");
+    if (searchInput.classList.contains("open")) searchInput.focus();
   };
-  search.oninput = () => {
-    const q = search.value.toLowerCase();
-    renderCards(rawData.filter(item => item.title.toLowerCase().includes(q)));
-  };
+
+  searchInput.addEventListener("input", applyFilters);
 
   window.addEventListener("scroll", () => {
     document.querySelector("#nav").classList.toggle("scrolled", window.scrollY > 40);
