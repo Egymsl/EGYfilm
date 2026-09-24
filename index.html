@@ -3,29 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
   <title>Egymsl — عالم الأفلام والمسلسلات</title>
   <meta name="description" content="Egymsl - المنصة الرائدة لمشاهدة أحدث الأفلام والمسلسلات بجودة عالية.">
-  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  
   <style>
-    :root {
-      --red: #e50914;
-      --bg: #080808;
-      --card: #151515;
-      --muted: #aaa;
-      --text: #fff;
-    }
+    :root { --red: #e50914; --bg: #080808; --card: #151515; --muted: #aaa; --text: #fff; }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Cairo', Arial, sans-serif; padding-bottom: 40px; }
     button, input { font: inherit; }
     button { cursor: pointer; }
-    
-    /* Header & Navigation */
     .nav { position: fixed; z-index: 20; top: 0; left: 0; right: 0; height: 72px; padding: 0 5%; display: flex; align-items: center; gap: 20px; background: linear-gradient(#050505dd, transparent); transition: .25s; }
     .nav.scrolled { background: #080808f2; }
     .logo { font-size: 28px; font-weight: 900; color: var(--red); letter-spacing: -1px; text-decoration: none; }
@@ -33,69 +22,33 @@
     .links { display: flex; gap: 22px; font-size: 14px; }
     .links a { color: #ddd; text-decoration: none; font-weight: 600; }
     .links a:hover { color: #fff; }
-    
     .actions { margin-inline-start: auto; display: flex; align-items: center; gap: 12px; position: relative; }
     .search-wrapper { position: relative; }
     .search { width: 0; opacity: 0; border: 1px solid #555; background: #111; color: #fff; padding: 8px 12px; border-radius: 6px; transition: .25s; }
     .search.open { width: 220px; opacity: 1; }
     .icon { border: 0; background: transparent; color: #fff; font-size: 20px; }
-
-    /* قائمة الاقتراحات المنسدلة للبحث */
-    .search-results-dropdown {
-      position: absolute;
-      top: 110%;
-      left: 0;
-      right: 0;
-      background: #121212;
-      border: 1px solid #333;
-      border-radius: 8px;
-      max-height: 380px;
-      overflow-y: auto;
-      z-index: 100;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.9);
-      display: none;
-    }
+    .search-results-dropdown { position: absolute; top: 110%; left: 0; right: 0; background: #121212; border: 1px solid #333; border-radius: 8px; max-height: 380px; overflow-y: auto; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.9); display: none; }
     .search-results-dropdown.show { display: block; }
-    .search-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px 12px;
-      border-bottom: 1px solid #222;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+    .search-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-bottom: 1px solid #222; cursor: pointer; transition: background 0.2s; }
     .search-item:last-child { border-bottom: none; }
     .search-item:hover { background: #222; }
-    .search-item img {
-      width: 42px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 4px;
-      flex-shrink: 0;
-    }
+    .search-item img { width: 42px; height: 60px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
     .search-item-info { display: flex; flex-direction: column; overflow: hidden; }
     .search-item-title { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .search-item-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
-    
-    /* Hero Banner */
     .hero { min-height: 480px; display: flex; align-items: center; padding: 100px 6% 40px; position: relative; overflow: hidden; background: radial-gradient(circle at 72% 38%, #8b000055 0, #0000 28%), linear-gradient(90deg, #080808 10%, #080808cc 40%, #08080822 75%, #080808 100%), url('https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1800&q=80') center/cover; }
     .hero-content { max-width: 650px; }
     .eyebrow { color: var(--red); font-weight: 800; letter-spacing: 1px; }
     .hero h1 { font-size: clamp(32px, 5vw, 56px); line-height: 1.1; margin: 10px 0; }
     .meta { display: flex; gap: 15px; color: #ddd; margin-bottom: 14px; font-size: 14px; }
     .hero p { color: #ddd; line-height: 1.8; max-width: 600px; font-size: 14px; }
-    
-    /* Layout & Grid */
     main { padding: 0 5% 60px; }
     .section { margin-top: 35px; }
     .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
     .section h2 { font-size: 20px; margin: 0; font-weight: 800; border-inline-start: 4px solid var(--red); padding-inline-start: 10px; }
-    
     .chips { display: flex; gap: 10px; flex-wrap: wrap; }
     .chip { border: 1px solid #444; background: #141414; color: #ddd; padding: 8px 18px; border-radius: 20px; font-weight: 600; }
     .chip.active, .chip:hover { background: var(--red); border-color: var(--red); color: #fff; }
-    
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
     .card { position: relative; aspect-ratio: 2/3; border-radius: 6px; overflow: hidden; background: var(--card); transition: .22s; box-shadow: 0 8px 25px #0005; cursor: pointer; }
     .card:hover { transform: scale(1.05); z-index: 2; }
@@ -105,8 +58,6 @@
     .play { position: absolute; inset: auto 10px 10px auto; width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--red); color: #fff; opacity: 0; transition: .2s; font-size: 14px; }
     .card:hover .play { opacity: 1; }
     .empty { padding: 30px; text-align: center; color: #aaa; grid-column: 1 / -1; font-size: 14px; }
-
-    /* Modal Video Player */
     .modal { position: fixed; inset: 0; background: #000d; z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
     .modal.show { display: flex; }
     .modal-box { max-width: 850px; width: 100%; background: #171717; border-radius: 10px; overflow: hidden; position: relative; max-height: 90vh; display: flex; flex-direction: column; }
@@ -118,9 +69,7 @@
     .episodes-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-height: 120px; overflow-y: auto; }
     .ep-btn { background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
     .ep-btn.active { background: var(--red); border-color: var(--red); font-weight: bold; }
-
     .footer { border-top: 1px solid #222; padding: 30px 5%; color: #777; text-align: center; font-size: 13px; }
-
     @media(max-width:700px){
       .links { display: none; }
       .nav { padding: 0 4%; }
@@ -131,7 +80,6 @@
   </style>
 </head>
 <body>
-
 <header class="nav" id="nav">
   <a href="#" class="logo">EGY<span>MSL</span></a>
   <nav class="links">
@@ -147,20 +95,17 @@
     <button class="icon" id="searchBtn" title="بحث">⌕</button>
   </div>
 </header>
-
 <section class="hero" id="home">
   <div class="hero-content">
     <div class="eyebrow">EGYMSL VIP</div>
     <h1 id="heroTitle">عالم من الترفيه المفتوح</h1>
     <div class="meta"><span>4K Ultra HD</span><span id="heroBadge">تحديثات يومية</span></div>
-    <p id="heroDesc">شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مجاناً وبأعلى جودة على منصة Egymsl.</p>
+    <p id="heroDesc">شاهد أحدث الأفلام والمسلسلات العربية والإنجليزية مجاناً وبأعلى جودة على منصة Egymsl.</p>
   </div>
 </section>
-
 <main>
   <section class="section">
     <div class="section-head"><h2 id="txtLangTitle">لغة الموقع والتصنيفات</h2></div>
-    
     <div style="margin-bottom: 12px;">
       <span style="font-size:13px; color:#aaa; display:block; margin-bottom:6px;" id="txtSiteLangLabel">لغة الواجهة:</span>
       <div class="chips">
@@ -168,55 +113,42 @@
         <button class="chip" id="btnLangEn" onclick="setSiteLanguage('en')">🇺🇸 English</button>
       </div>
     </div>
-
     <div>
       <span style="font-size:13px; color:#aaa; display:block; margin-bottom:6px;" id="txtCategoryLabel">التصنيف:</span>
       <div class="chips">
         <button class="chip active" onclick="filterCategory('all', this)" id="btnCatAll">الكل</button>
         <button class="chip" onclick="filterCategory('movie_ar', this)" id="btnCatMoviesAr">🎬 أفلام عربية</button>
-        <button class="chip" onclick="filterCategory('movie_en', this)" id="btnCatMoviesEn">🎬 أفلام أجنبية</button>
+        <button class="chip" onclick="filterCategory('movie_en', this)" id="btnCatMoviesEn">🎬 أفلام إنجلش</button>
         <button class="chip" onclick="filterCategory('series_ar', this)" id="btnCatSeriesAr">📺 مسلسلات عربية</button>
-        <button class="chip" onclick="filterCategory('series_en', this)" id="btnCatSeriesEn">📺 مسلسلات أجنبية</button>
+        <button class="chip" onclick="filterCategory('series_en', this)" id="btnCatSeriesEn">📺 مسلسلات إنجلش</button>
       </div>
     </div>
   </section>
-
   <section class="section" id="recently">
     <div class="section-head"><h2 id="txtRecentTitle">🆕 أحدث الإضافات</h2></div>
-    <div class="grid" id="recentlyGrid">
-      <div class="empty">جاري تحميل أحدث الإضافات...</div>
-    </div>
+    <div class="grid" id="recentlyGrid"><div class="empty">جاري تحميل أحدث الإضافات...</div></div>
   </section>
-
   <section class="section" id="content">
     <div class="section-head"><h2 id="txtMainTitle">كل المحتوى</h2></div>
-    <div class="grid" id="mainGrid">
-      <div class="empty">جاري التحميل...</div>
-    </div>
+    <div class="grid" id="mainGrid"><div class="empty">جاري التحميل...</div></div>
   </section>
 </main>
-
 <footer class="footer" id="txtFooter">© 2026 Egymsl — جميع الحقوق محفوظة.</footer>
-
 <div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
     <button class="close" onclick="closeModal()">×</button>
     <div class="modal-body">
       <h2 id="modalTitle" style="margin:0 0 10px 0; font-size:18px;"></h2>
-      
       <div id="episodesBox" class="episodes-box" style="display:none;">
         <span style="font-size:13px; color:var(--muted);" id="txtEpSelect">اختر الحلقة / الموسم:</span>
         <div class="episodes-list" id="episodesList"></div>
       </div>
-
       <div class="video-container">
         <iframe id="videoIframe" src="" allowfullscreen></iframe>
       </div>
     </div>
   </div>
 </div>
-
-<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
@@ -243,15 +175,15 @@
       libraryNav: "المكتبة",
       heroTitle: "عالم من الترفيه المفتوح",
       heroBadge: "تحديثات يومية",
-      heroDesc: "شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مجاناً وبأعلى جودة على منصة Egymsl.",
+      heroDesc: "شاهد أحدث الأفلام والمسلسلات العربية والإنجليزية مجاناً وبأعلى جودة على منصة Egymsl.",
       langTitle: "لغة الموقع والتصنيفات",
       siteLangLabel: "لغة الواجهة:",
       categoryLabel: "التصنيف:",
       catAll: "الكل",
       catMoviesAr: "🎬 أفلام عربية",
-      catMoviesEn: "🎬 أفلام أجنبية",
+      catMoviesEn: "🎬 أفلام إنجلش",
       catSeriesAr: "📺 مسلسلات عربية",
-      catSeriesEn: "📺 مسلسلات أجنبية",
+      catSeriesEn: "📺 مسلسلات إنجلش",
       recentTitle: "🆕 أحدث الإضافات",
       mainTitle: "كل المحتوى",
       noResult: "لا توجد نتائج مطابقة لبحثك.",
@@ -272,9 +204,9 @@
       categoryLabel: "Category:",
       catAll: "All",
       catMoviesAr: "🎬 Arabic Movies",
-      catMoviesEn: "🎬 Foreign Movies",
+      catMoviesEn: "🎬 English Movies",
       catSeriesAr: "📺 Arabic Series",
-      catSeriesEn: "📺 Foreign Series",
+      catSeriesEn: "📺 English Series",
       recentTitle: "🆕 Recently Added",
       mainTitle: "All Content",
       noResult: "No matching results found.",
@@ -290,7 +222,6 @@
     applyFilters();
   });
 
-  // تنظيف النص للبحث الذكي والمرن
   function normalizeText(text) {
     if (!text) return '';
     return text.toString().toLowerCase()
@@ -305,18 +236,15 @@
   function renderGrid(containerId, items, isRecent = false) {
     const grid = document.getElementById(containerId);
     grid.innerHTML = '';
-
     if (items.length === 0) {
       grid.innerHTML = `<div class="empty">${dict[siteLang].noResult}</div>`;
       return;
     }
-
     items.forEach((item) => {
       const card = document.createElement('article');
       card.className = 'card';
       const title = item.title || 'بدون عنوان';
       const poster = item.poster || 'https://via.placeholder.com/300x450?text=No+Poster';
-      
       card.innerHTML = `
         <img class="poster" src="${poster}" alt="${title}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'">
         ${isRecent ? `<span class="badge-new">${dict[siteLang].newBadge}</span>` : ''}
@@ -330,36 +258,39 @@
 
   function applyFilters() {
     let filtered = rawData;
-
     if (currentCategory !== 'all') {
       filtered = filtered.filter(x => {
-        // فلترة دقيقة حسب نوع المحتوى واللغة من الفايربيس
-        if (currentCategory === 'movie_ar') return x.type === 'movie' && (x.lang === 'ar' || x.category === 'arabic');
-        if (currentCategory === 'movie_en') return x.type === 'movie' && (x.lang === 'en' || x.category === 'english');
-        if (currentCategory === 'series_ar') return x.type === 'series' && (x.lang === 'ar' || x.category === 'arabic');
-        if (currentCategory === 'series_en') return x.type === 'series' && (x.lang === 'en' || x.category === 'english');
-        return x.type === currentCategory || x.category === currentCategory;
+        const catStr = (x.category || '').toLowerCase();
+        const typeStr = (x.type || '').toLowerCase();
+        const titleStr = (x.title || '').toLowerCase();
+        const langStr = (x.lang || '').toLowerCase();
+
+        const isArabic = langStr === 'ar' || catStr.includes('ar') || catStr.includes('arabic') || catStr.includes('عربي');
+        const isEnglish = langStr === 'en' || catStr.includes('en') || catStr.includes('english') || catStr.includes('foreign') || catStr.includes('أجنبي') || /[a-z]/i.test(titleStr);
+
+        if (currentCategory === 'movie_ar') return (typeStr === 'movie' || catStr.includes('movie')) && isArabic;
+        if (currentCategory === 'movie_en') return (typeStr === 'movie' || catStr.includes('movie')) && isEnglish;
+        if (currentCategory === 'series_ar') return (typeStr === 'series' || catStr.includes('series')) && isArabic;
+        if (currentCategory === 'series_en') return (typeStr === 'series' || catStr.includes('series')) && isEnglish;
+
+        return typeStr === currentCategory || catStr === currentCategory;
       });
     }
-
     const recentItems = [...filtered].reverse().slice(0, 6);
     renderGrid('recentlyGrid', recentItems, true);
     renderGrid('mainGrid', filtered);
   }
 
-  // البحث المنسدل اللحظي (Live Search - Autocomplete)
   const searchInput = document.getElementById("search");
   const searchResultsDropdown = document.getElementById("searchResults");
 
   searchInput.addEventListener("input", function() {
     const query = normalizeText(this.value);
     searchResultsDropdown.innerHTML = '';
-
     if (query.length === 0) {
       searchResultsDropdown.classList.remove("show");
       return;
     }
-
     const matches = rawData.filter(item => {
       const titleNorm = normalizeText(item.title);
       return titleNorm.includes(query) || query.split(' ').every(q => titleNorm.includes(q));
@@ -408,7 +339,6 @@
   function setSiteLanguage(lang) {
     siteLang = lang;
     const htmlElem = document.getElementById('mainHtml');
-    
     if (lang === 'en') {
       htmlElem.setAttribute('dir', 'ltr');
       htmlElem.setAttribute('lang', 'en');
@@ -420,7 +350,6 @@
       document.getElementById('btnLangEn').classList.remove('active');
       document.getElementById('btnLangAr').classList.add('active');
     }
-
     const t = dict[lang];
     document.getElementById('search').placeholder = t.searchPlaceholder;
     document.getElementById('txtHome').textContent = t.home;
@@ -441,7 +370,6 @@
     document.getElementById('txtMainTitle').textContent = t.mainTitle;
     document.getElementById('txtEpSelect').textContent = t.epSelect;
     document.getElementById('txtFooter').textContent = t.footer;
-
     applyFilters();
   }
 
@@ -450,9 +378,7 @@
     const epBox = document.getElementById('episodesBox');
     const epList = document.getElementById('episodesList');
     const iframe = document.getElementById('videoIframe');
-    
     epList.innerHTML = '';
-
     if (item.type === 'series' && item.episodes && item.episodes.length > 0) {
       epBox.style.display = 'block';
       item.episodes.forEach((ep, idx) => {
@@ -471,7 +397,6 @@
       epBox.style.display = 'none';
       iframe.src = item.videoUrl || '';
     }
-
     document.getElementById('modal').classList.add('show');
   }
 
@@ -489,6 +414,5 @@
     document.querySelector("#nav").classList.toggle("scrolled", window.scrollY > 40);
   });
 </script>
-
 </body>
 </html>
