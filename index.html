@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Egymsl | نتفليكس الشرق الأوسط</title>
+    <title>Egymsl | ايجي مثل - عالم من الترفيه</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --netflix-red: #E50914;
-            --netflix-dark-red: #B81D24;
+            --red: #E50914;
+            --dark-red: #B81D24;
             --bg-black: #141414;
             --card-bg: #181818;
-            --card-hover: #282828;
             --text-white: #FFFFFF;
             --text-gray: #AAAAAA;
             --gold: #FFD700;
@@ -51,7 +50,7 @@
             font-size: 30px;
             font-weight: 900;
             text-decoration: none;
-            color: var(--netflix-red);
+            color: var(--red);
             letter-spacing: 2px;
             text-transform: uppercase;
             text-shadow: 0 0 15px rgba(229, 9, 20, 0.6);
@@ -70,7 +69,7 @@
             letter-spacing: 0;
         }
 
-        /* Netflix Hero Banner */
+        /* Hero Banner */
         .hero {
             position: relative;
             height: 60vh;
@@ -87,7 +86,7 @@
         }
 
         .hero-badge {
-            background: var(--netflix-red);
+            background: var(--red);
             color: #fff;
             padding: 4px 12px;
             font-size: 12px;
@@ -110,7 +109,7 @@
             line-height: 1.6;
         }
 
-        /* Navigation Categories Bar */
+        /* Categories Bar */
         .categories-nav {
             padding: 20px 5% 10px;
             position: sticky;
@@ -144,13 +143,13 @@
         }
 
         .tab-btn.active, .tab-btn:hover {
-            background: var(--netflix-red);
+            background: var(--red);
             color: #fff;
-            border-color: var(--netflix-red);
+            border-color: var(--red);
             box-shadow: 0 0 15px rgba(229, 9, 20, 0.5);
         }
 
-        /* Netflix Card Grid */
+        /* Movies Grid */
         main {
             padding: 20px 5%;
         }
@@ -168,7 +167,7 @@
             content: '';
             width: 5px;
             height: 24px;
-            background: var(--netflix-red);
+            background: var(--red);
             border-radius: 2px;
         }
 
@@ -231,12 +230,12 @@
         .play-btn {
             width: 50px;
             height: 50px;
-            background: var(--netflix-red);
+            background: var(--red);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 20px var(--netflix-red);
+            box-shadow: 0 0 20px var(--red);
         }
 
         .play-btn::after {
@@ -276,7 +275,7 @@
             font-size: 16px;
         }
 
-        /* Fullscreen Modal Cinema Player */
+        /* Player Modal */
         #playerModal {
             display: none;
             position: fixed;
@@ -306,7 +305,7 @@
         .modal-title { font-size: 20px; font-weight: 800; }
 
         .close-btn {
-            background: var(--netflix-red);
+            background: var(--red);
             color: #fff;
             border: none;
             padding: 8px 22px;
@@ -336,19 +335,19 @@
 
     <!-- Header -->
     <header>
-        <a href="#" class="brand-logo">Egymsl <span class="sub-tag">PRO</span></a>
+        <a href="#" class="brand-logo">EGY<span>MSL</span> <span class="sub-tag">PRO</span></a>
     </header>
 
-    <!-- Netflix Hero Section -->
+    <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
             <span class="hero-badge">شاهد الآن</span>
-            <h1 class="hero-title">عالم من الترفيه بلا حدود</h1>
-            <p class="hero-desc">استمتع بأحدث الأفلام والمسلسلات حصرياً على منصة Egymsl بجودة عالية وبدون إعلانات.</p>
+            <h1 class="hero-title">عالم من الترفيه على Egymsl</h1>
+            <p class="hero-desc">استمتع بأحدث الأفلام والمسلسلات حصرياً على منصتك بجودة عالية وبدون إعلانات.</p>
         </div>
     </section>
 
-    <!-- Categories Nav Bar -->
+    <!-- Categories Nav -->
     <div class="categories-nav">
         <div class="tabs">
             <button class="tab-btn active" onclick="filterContent('all', this)">الكل</button>
@@ -359,7 +358,7 @@
         </div>
     </div>
 
-    <!-- Main Movies Section -->
+    <!-- Main Content -->
     <main>
         <h2 class="section-header">المحتوى المتاح</h2>
         <div class="grid" id="contentGrid">
@@ -367,11 +366,11 @@
         </div>
     </main>
 
-    <!-- Cinema Video Modal Player -->
+    <!-- Cinema Video Player -->
     <div id="playerModal">
         <div class="modal-box">
             <div class="modal-header">
-                <h3 class="modal-title" id="playingTitle">مشاهدة الفيلم</h3>
+                <h3 class="modal-title" id="playingTitle">مشاهدة العرض</h3>
                 <button class="close-btn" onclick="closePlayer()">إغلاق ✖</button>
             </div>
             <div class="video-container">
@@ -399,7 +398,6 @@
 
         let allData = [];
 
-        // Fetch Movies from Firestore
         db.collection("movies").onSnapshot((snapshot) => {
             allData = [];
             snapshot.forEach((doc) => {
@@ -410,7 +408,6 @@
             document.getElementById('contentGrid').innerHTML = '<p class="empty-msg">عذراً، تعذر جلب البيانات.</p>';
         });
 
-        // Render Netflix Cards
         function renderCards(items) {
             const grid = document.getElementById('contentGrid');
             grid.innerHTML = '';
@@ -445,7 +442,6 @@
             });
         }
 
-        // Category Filter Function
         function filterContent(category, btnElement) {
             const buttons = document.querySelectorAll('.tab-btn');
             buttons.forEach(b => b.classList.remove('active'));
