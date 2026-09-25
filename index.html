@@ -61,12 +61,11 @@
     .modal { position: fixed; inset: 0; background: #000d; z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
     .modal.show { display: flex; }
     .modal-box { max-width: 850px; width: 100%; background: #171717; border-radius: 10px; overflow: hidden; position: relative; max-height: 90vh; display: flex; flex-direction: column; }
-    .modal-body { padding: 20px; overflow-y: auto; text-align: center; }
+    .modal-body { padding: 20px; overflow-y: auto; }
     .close { position: absolute; top: 12px; left: 12px; border: 0; background: var(--red); color: #fff; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; z-index: 10; }
-    .video-container { position: relative; width: 100%; min-height: 250px; background: #000; border-radius: 8px; overflow: hidden; margin-top: 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
-    .watch-external-btn { background: var(--red); color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(229,9,20,0.4); transition: transform 0.2s; }
-    .watch-external-btn:hover { transform: scale(1.05); }
-    .episodes-box { margin-top: 15px; background: #111; padding: 12px; border-radius: 6px; text-align: right; }
+    .video-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 8px; overflow: hidden; margin-top: 10px; }
+    .video-container iframe, .video-container video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .episodes-box { margin-top: 15px; background: #111; padding: 12px; border-radius: 6px; }
     .episodes-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-height: 120px; overflow-y: auto; }
     .ep-btn { background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
     .ep-btn.active { background: var(--red); border-color: var(--red); font-weight: bold; }
@@ -81,7 +80,7 @@
   </style>
 </head>
 <body>
-<header class="nav" id="nav">
+  <header class="nav" id="nav">
   <a href="#" class="logo">EGY<span>MSL</span></a>
   <nav class="links">
     <a href="#home" id="txtHome">الرئيسية</a>
@@ -140,7 +139,7 @@
   <div class="modal-box">
     <button class="close" onclick="closeModal()">×</button>
     <div class="modal-body">
-      <h2 id="modalTitle" style="margin:0 0 10px 0; font-size:18px; text-align:right;"></h2>
+      <h2 id="modalTitle" style="margin:0 0 10px 0; font-size:18px;"></h2>
       <div id="episodesBox" class="episodes-box" style="display:none;">
         <span style="font-size:13px; color:var(--muted);" id="txtEpSelect">اختر الحلقة / الموسم:</span>
         <div class="episodes-list" id="episodesList"></div>
@@ -190,7 +189,6 @@
       noResult: "لا توجد نتائج مطابقة لبحثك.",
       newBadge: "جديد",
       epSelect: "اختر الحلقة / الموسم:",
-      watchBtn: "مشاهدة الفيلم / التحميل الآن 🎬",
       footer: "© 2026 Egymsl — جميع الحقوق محفوظة."
     },
     en: {
@@ -214,7 +212,6 @@
       noResult: "No matching results found.",
       newBadge: "NEW",
       epSelect: "Select Season / Episode:",
-      watchBtn: "Watch / Download Now 🎬",
       footer: "© 2026 Egymsl — All rights reserved."
     }
   };
@@ -409,16 +406,20 @@
 
   function renderSmartPlayer(url, container) {
     if (!url) {
-      container.innerHTML = `<span style="color:#aaa; font-size:14px;">عذراً، الرابط غير متوفر حالياً.</span>`;
+      container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:14px;">عذراً، الرابط غير متوفر حالياً.</div>`;
       return;
     }
-    // عرض زر مباشر يتخطى مانع الحماية ويفتح الفيلم بتبويب جديد
-    container.innerHTML = `
-      <a href="${url}" target="_blank" class="watch-external-btn">
-        ${dict[siteLang].watchBtn}
-      </a>
-      <p style="color: #888; font-size: 12px; margin-top: 12px;">هذا الرابط يتطلب الفتح في نافذة مستقلة لتشغيله بجودة عالية.</p>
-    `;
+
+    let embedUrl = url;
+    if (url.includes('youtube.com/watch?v=')) {
+      const videoId = url.split('v=')[1]?.split('&')[0];
+      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    } else if (url.includes('youtu.be/')) {
+      const videoId = url.split('youtu.be/')[1]?.split('?')[0];
+      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+
+    container.innerHTML = `<iframe src="${embedUrl}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>`;
   }
 
   function closeModal() {
