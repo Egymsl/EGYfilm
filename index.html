@@ -149,6 +149,7 @@
     </div>
   </div>
 </div>
+
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
@@ -365,7 +366,7 @@
     document.getElementById('btnCatMoviesAr').textContent = t.catMoviesAr;
     document.getElementById('btnCatMoviesEn').textContent = t.catMoviesEn;
     document.getElementById('btnCatSeriesAr').textContent = t.catSeriesAr;
-    document.getElementById('btnCatSeriesEn').textContent = t.catSeriesEn;
+    document.getElementById('btnCatSeriesEn').textContent, t.catSeriesEn;
     document.getElementById('txtRecentTitle').textContent = t.recentTitle;
     document.getElementById('txtMainTitle').textContent = t.mainTitle;
     document.getElementById('txtEpSelect').textContent = t.epSelect;
@@ -406,24 +407,11 @@
 
   function renderSmartPlayer(url, container) {
     if (!url) return;
-    const isDirectVideo = url.includes('.mp4') || url.includes('.m3u8') || url.includes('.mkv') || url.includes('.webm') || url.includes('googlevideo.com') || url.startsWith('blob:');
-    
-    if (isDirectVideo) {
-      container.innerHTML = `<video id="activeVideoPlayer" controls playsinline style="width:100%; height:100%; background:#000;"></video>`;
-      const player = document.getElementById('activeVideoPlayer');
-      player.src = url;
-      player.load();
-      player.play().catch(e => console.log("Autoplay blocked:", e));
-    } else {
-      container.innerHTML = `<iframe src="${url}" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>`;
-    }
+    // تم تعديل المشغل هنا ليقوم بعرض الروابط كإطار iframe لتخطي حماية السيرفر الخارجي وعرض الفيديو مباشرة بدون شاشة سودة
+    container.innerHTML = `<iframe src="${url}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" style="width:100%; height:100%; border:none;"></iframe>`;
   }
 
   function closeModal() {
-    const player = document.getElementById('activeVideoPlayer');
-    if (player) {
-      player.pause();
-    }
     document.getElementById('videoContainer').innerHTML = '';
     document.getElementById('modal').classList.remove('show');
   }
