@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Egymsl — عالم الأفلام والمسلسلات</title>
-  <meta name="description" content="Egymsl - المنصة الرائدة لمشاهدة أحدث الأفلام والمسلسلات بجودة عالية.">
+  <title>Egymsl — عالم الترفيه و الـ IPTV</title>
+  <meta name="description" content="Egymsl - المنصة الشاملة لمشاهدة الأفلام والمسلسلات وتشغيل اشتراكات IPTV (Xtream, Nova, M3U).">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Cairo', Arial, sans-serif; padding-bottom: 40px; }
-    button, input { font: inherit; }
+    button, input, select { font: inherit; }
     button { cursor: pointer; }
     .nav { position: fixed; z-index: 20; top: 0; left: 0; right: 0; height: 72px; padding: 0 5%; display: flex; align-items: center; gap: 20px; background: linear-gradient(#050505dd, transparent); transition: .25s; }
     .nav.scrolled { background: #080808f2; }
@@ -27,6 +27,7 @@
     .search { width: 0; opacity: 0; border: 1px solid #555; background: #111; color: #fff; padding: 8px 12px; border-radius: 6px; transition: .25s; }
     .search.open { width: 220px; opacity: 1; }
     .icon { border: 0; background: transparent; color: #fff; font-size: 20px; }
+    .iptv-btn-head { background: var(--red); color: #fff; border: 0; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 13px; }
     .search-results-dropdown { position: absolute; top: 110%; left: 0; right: 0; background: #121212; border: 1px solid #333; border-radius: 8px; max-height: 380px; overflow-y: auto; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.9); display: none; }
     .search-results-dropdown.show { display: block; }
     .search-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-bottom: 1px solid #222; cursor: pointer; transition: background 0.2s; }
@@ -71,25 +72,31 @@
     .episodes-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-height: 120px; overflow-y: auto; }
     .ep-btn { background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
     .ep-btn.active { background: var(--red); border-color: var(--red); font-weight: bold; }
+    .iptv-card { background: #121212; border: 1px solid #282828; border-radius: 10px; padding: 20px; margin-top: 20px; }
+    .iptv-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 15px; }
+    .iptv-input { background: #1c1c1c; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 6px; font-size: 13px; }
+    .iptv-submit { background: var(--red); color: #fff; border: 0; padding: 10px 20px; border-radius: 6px; font-weight: bold; font-size: 14px; grid-column: 1 / -1; }
     .footer { border-top: 1px solid #222; padding: 30px 5%; color: #777; text-align: center; font-size: 13px; }
     @media(max-width:700px){
       .links { display: none; }
       .nav { padding: 0 4%; }
       .hero { min-height: 400px; padding: 90px 5% 30px; }
       .grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
-      .search.open { width: 160px; }
+      .search.open { width: 140px; }
     }
   </style>
 </head>
 <body>
-  <header class="nav" id="nav">
+<header class="nav" id="nav">
   <a href="#" class="logo">EGY<span>MSL</span></a>
   <nav class="links">
     <a href="#home" id="txtHome">الرئيسية</a>
     <a href="#recently" id="txtRecentNav">أحدث الإضافات</a>
+    <a href="#iptvSection" id="txtIptvNav">مشغل IPTV</a>
     <a href="#content" id="txtLibraryNav">المكتبة</a>
   </nav>
   <div class="actions">
+    <button class="iptv-btn-head" onclick="document.getElementById('iptvSection').scrollIntoView()">📺 IPTV 2in1</button>
     <div class="search-wrapper">
       <input id="search" class="search" placeholder="ابحث عن فيلم أو مسلسل..." aria-label="بحث" autocomplete="off">
       <div id="searchResults" class="search-results-dropdown"></div>
@@ -99,13 +106,43 @@
 </header>
 <section class="hero" id="home">
   <div class="hero-content">
-    <div class="eyebrow">EGYMSL VIP</div>
-    <h1 id="heroTitle">عالم من الترفيه المفتوح</h1>
+    <div class="eyebrow">EGYMSL VIP 2IN1</div>
+    <h1 id="heroTitle">عالم الترفيه و الـ IPTV المباشر</h1>
     <div class="meta"><span>4K Ultra HD</span><span id="heroBadge">تحديثات يومية</span></div>
-    <p id="heroDesc">شاهد أحدث الأفلام والمسلسلات العربية والإنجليزية مجاناً وبأعلى جودة على منصة Egymsl.</p>
+    <p id="heroDesc">شاهد الأفلام والمسلسلات مجاناً بالإضافة لتشغيل اشتراكات IPTV (Xtream / Nova / M3U) في مكان واحد.</p>
   </div>
 </section>
 <main>
+  <!-- قسم مشغل الـ IPTV المدمج (2 in 1) -->
+  <section class="section" id="iptvSection">
+    <div class="section-head"><h2>📺 مشغل الـ IPTV المدمج (Xtream / Nova / M3U)</h2></div>
+    <div class="iptv-card">
+      <div style="font-size:14px; color:#ccc;">قم باختيار نوع المشغل وأدخل بيانات اشتراكك لتشغيل القنوات المباشرة فوراً:</div>
+      <div style="margin-top:12px;">
+        <select id="iptvTypeSelect" class="iptv-input" onchange="switchIptvType()" style="width: 100%; max-width: 300px;">
+          <option value="xtream">سيرفر Xtream API</option>
+          <option value="nova">سيرفر Nova IPTV</option>
+          <option value="m3u">رابط قائمة M3U / M3U8</option>
+        </select>
+      </div>
+
+      <!-- نموذج سيرفرات Xtream و Nova -->
+      <form id="formXtream" class="iptv-form" onsubmit="event.preventDefault(); playXtreamStream();">
+        <input type="url" id="xtreamHost" class="iptv-input" placeholder="رابط السيرفر (Host/URL) مثلاً: http://server.com:8080" required>
+        <input type="text" id="xtreamUser" class="iptv-input" placeholder="اسم المستخدم (Username)" required>
+        <input type="password" id="xtreamPass" class="iptv-input" placeholder="كلمة السر (Password)" required>
+        <input type="text" id="xtreamStreamId" class="iptv-input" placeholder="رقم القناة/الفيلم (Stream ID) اختياري">
+        <button type="submit" class="iptv-submit">▶ تشغيل البث المباشر</button>
+      </form>
+
+      <!-- نموذج روابط M3U -->
+      <form id="formM3u" class="iptv-form" style="display:none;" onsubmit="event.preventDefault(); playM3uStream();">
+        <input type="url" id="m3uUrl" class="iptv-input" placeholder="رابط قائمة M3U أو M3U8 المباشر" style="grid-column: 1 / -1;" required>
+        <button type="submit" class="iptv-submit">▶ تشغيل الرابط</button>
+      </form>
+    </div>
+  </section>
+
   <section class="section">
     <div class="section-head"><h2 id="txtLangTitle">لغة الموقع والتصنيفات</h2></div>
     <div style="margin-bottom: 12px;">
@@ -135,7 +172,7 @@
     <div class="grid" id="mainGrid"><div class="empty">جاري التحميل...</div></div>
   </section>
 </main>
-<footer class="footer" id="txtFooter">© 2026 Egymsl — جميع الحقوق محفوظة.</footer>
+<footer class="footer" id="txtFooter">© 2026 Egymsl 2in1 — جميع الحقوق محفوظة.</footer>
 
 <div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
@@ -175,9 +212,9 @@
       home: "الرئيسية",
       recentNav: "أحدث الإضافات",
       libraryNav: "المكتبة",
-      heroTitle: "عالم من الترفيه المفتوح",
+      heroTitle: "عالم الترفيه و الـ IPTV المباشر",
       heroBadge: "تحديثات يومية",
-      heroDesc: "شاهد أحدث الأفلام والمسلسلات العربية والإنجليزية مجاناً وبأعلى جودة على منصة Egymsl.",
+      heroDesc: "شاهد أحدث الأفلام والمسلسلات بالإضافة لتشغيل اشتراكات IPTV مجاناً وبأعلى جودة على منصة Egymsl.",
       langTitle: "لغة الموقع والتصنيفات",
       siteLangLabel: "لغة الواجهة:",
       categoryLabel: "التصنيف:",
@@ -191,16 +228,16 @@
       noResult: "لا توجد نتائج مطابقة لبحثك.",
       newBadge: "جديد",
       epSelect: "اختر الحلقة / الموسم:",
-      footer: "© 2026 Egymsl — جميع الحقوق محفوظة."
+      footer: "© 2026 Egymsl 2in1 — جميع الحقوق محفوظة."
     },
     en: {
       searchPlaceholder: "Search movies or series...",
       home: "Home",
       recentNav: "Recently Added",
       libraryNav: "Library",
-      heroTitle: "Unlimited Entertainment",
+      heroTitle: "Unlimited Entertainment & IPTV",
       heroBadge: "Daily Updates",
-      heroDesc: "Watch the latest movies and TV series for free in high quality on Egymsl.",
+      heroDesc: "Watch movies, series, and live IPTV streams for free on Egymsl.",
       langTitle: "Website Language & Categories",
       siteLangLabel: "Interface Language:",
       categoryLabel: "Category:",
@@ -214,7 +251,7 @@
       noResult: "No matching results found.",
       newBadge: "NEW",
       epSelect: "Select Season / Episode:",
-      footer: "© 2026 Egymsl — All rights reserved."
+      footer: "© 2026 Egymsl 2in1 — All rights reserved."
     }
   };
 
@@ -375,6 +412,43 @@
     applyFilters();
   }
 
+  // IPTV Functions
+  function switchIptvType() {
+    const val = document.getElementById('iptvTypeSelect').value;
+    if (val === 'm3u') {
+      document.getElementById('formXtream').style.display = 'none';
+      document.getElementById('formM3u').style.display = 'grid';
+    } else {
+      document.getElementById('formXtream').style.display = 'grid';
+      document.getElementById('formM3u').style.display = 'none';
+    }
+  }
+
+  function playXtreamStream() {
+    let host = document.getElementById('xtreamHost').value.trim();
+    const user = document.getElementById('xtreamUser').value.trim();
+    const pass = document.getElementById('xtreamPass').value.trim();
+    const streamId = document.getElementById('xtreamStreamId').value.trim() || 'live';
+
+    if (host.endsWith('/')) host = host.slice(0, -1);
+    const finalStreamUrl = `${host}/live/${user}/${pass}/${streamId}.m3u8`;
+
+    openCustomModal('بث IPTV مباشر (Xtream/Nova)', finalStreamUrl);
+  }
+
+  function playM3uStream() {
+    const m3uUrl = document.getElementById('m3uUrl').value.trim();
+    openCustomModal('قناة M3U مباشرة', m3uUrl);
+  }
+
+  function openCustomModal(title, streamUrl) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('episodesBox').style.display = 'none';
+    const videoContainer = document.getElementById('videoContainer');
+    renderSmartPlayer(streamUrl, videoContainer);
+    document.getElementById('modal').classList.add('show');
+  }
+
   function openModal(item) {
     document.getElementById('modalTitle').textContent = item.title || '';
     const epBox = document.getElementById('episodesBox');
@@ -412,7 +486,7 @@
       return;
     }
 
-    if (url.endsWith('.mp4') || url.includes('.mp4?') || url.includes('video/')) {
+    if (url.endsWith('.mp4') || url.includes('.mp4?') || url.includes('video/') || url.includes('.m3u8')) {
       container.innerHTML = `
         <div class="video-watermark">EGY<span>MSL</span></div>
         <video src="${url}" controls autoplay playsinline style="width:100%; height:100%; object-fit:contain; background:#000;"></video>
