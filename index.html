@@ -332,7 +332,7 @@
     renderGrid('mainGrid', filtered);
   }
 
-  // --- Xtream API Engine ---
+  // --- Xtream API Engine (مع بروكسي corsproxy الداعم للبورتات) ---
   function openSettingsModal() {
     document.getElementById('settingXtreamHost').value = localStorage.getItem('xtream_host') || '';
     document.getElementById('settingXtreamUser').value = localStorage.getItem('xtream_user') || '';
@@ -387,7 +387,7 @@
     grid.innerHTML = `<div class="empty">جاري الاتصال بسيرفر Xtream وجلب القنوات...</div>`;
 
     const targetApi = `${host}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`;
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetApi)}`;
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetApi)}`;
 
     try {
       const res = await fetch(proxyUrl);
