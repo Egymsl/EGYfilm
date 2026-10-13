@@ -157,21 +157,29 @@
 
 <footer class="footer" id="txtFooter">© 2026 Egymsl Player — جميع الحقوق محفوظة.</footer>
 
-<!-- نافذة إعدادات M3U المباشر -->
+<!-- نافذة إعدادات Xtream API الحقيقية -->
 <div class="modal" id="settingsModal" onclick="if(event.target===this)closeSettingsModal()">
   <div class="modal-box" style="max-width: 480px;">
     <button class="close" onclick="closeSettingsModal()">×</button>
     <div class="modal-body">
-      <h2 style="margin-top:0; font-size:18px;">⚙️ إعدادات تشغيل الـ IPTV</h2>
-      <p style="font-size:12px; color:#aaa;">أدخل رابط قائمة التشغيل (M3U Link) الخاص باشتراكك:</p>
+      <h2 style="margin-top:0; font-size:18px;">⚙️ إعدادات سيرفر Xtream API</h2>
+      <p style="font-size:12px; color:#aaa;">أدخل بيانات اشتراكك الأصلیة:</p>
       
       <div class="setting-group">
-        <label>رابط M3U:</label>
-        <input type="url" id="settingM3uUrl" class="setting-input" placeholder="http://server.com:port/get.php?username=...&password=...&type=m3u">
+        <label>رابط السيرفر (Host):</label>
+        <input type="text" id="settingXtreamHost" class="setting-input" placeholder="http://mhav1.com:2095">
+      </div>
+      <div class="setting-group">
+        <label>اسم المستخدم (Username):</label>
+        <input type="text" id="settingXtreamUser" class="setting-input">
+      </div>
+      <div class="setting-group">
+        <label>كلمة المرور (Password):</label>
+        <input type="password" id="settingXtreamPass" class="setting-input">
       </div>
 
-      <button onclick="saveM3uSettings()" style="width:100%; background:var(--red); color:#fff; border:0; padding:12px; border-radius:6px; font-weight:bold; margin-top:10px;">💾 حفظ وتشغيل القنوات</button>
-      <button onclick="clearM3uSettings()" style="width:100%; background:#333; color:#ff4444; border:0; padding:8px; border-radius:6px; margin-top:8px; font-size:12px;">حذف بيانات الاشتراك</button>
+      <button onclick="saveXtreamSettings()" style="width:100%; background:var(--red); color:#fff; border:0; padding:12px; border-radius:6px; font-weight:bold; margin-top:10px;">💾 حفظ والاتصال بسيرفر Xtream</button>
+      <button onclick="clearXtreamSettings()" style="width:100%; background:#333; color:#ff4444; border:0; padding:8px; border-radius:6px; margin-top:8px; font-size:12px;">حذف بيانات الاشتراك</button>
     </div>
   </div>
 </div>
@@ -324,9 +332,11 @@
     renderGrid('mainGrid', filtered);
   }
 
-  // --- M3U Playlist Parser Engine ---
+  // --- Xtream API Engine المباشر والصحيح ---
   function openSettingsModal() {
-    document.getElementById('settingM3uUrl').value = localStorage.getItem('m3u_url') || '';
+    document.getElementById('settingXtreamHost').value = localStorage.getItem('xtream_host') || '';
+    document.getElementById('settingXtreamUser').value = localStorage.getItem('xtream_user') || '';
+    document.getElementById('settingXtreamPass').value = localStorage.getItem('xtream_pass') || '';
     document.getElementById('settingsModal').classList.add('show');
   }
 
@@ -334,83 +344,80 @@
     document.getElementById('settingsModal').classList.remove('show');
   }
 
-  function saveM3uSettings() {
-    const m3uUrl = document.getElementById('settingM3uUrl').value.trim();
-    if (!m3uUrl) {
-      alert('برجاء إدخال رابط M3U صحيح.');
+  function saveXtreamSettings() {
+    let host = document.getElementById('settingXtreamHost').value.trim();
+    const user = document.getElementById('settingXtreamUser').value.trim();
+    const pass = document.getElementById('settingXtreamPass').value.trim();
+
+    if (!host || !user || !pass) {
+      alert('برجاء إدخال بيانات الـ Xtream كاملة.');
       return;
     }
-    localStorage.setItem('m3u_url', m3uUrl);
+
+    if (host.endsWith('/')) host = host.slice(0, -1);
+    localStorage.setItem('xtream_host', host);
+    localStorage.setItem('xtream_user', user);
+    localStorage.setItem('xtream_pass', pass);
+
     closeSettingsModal();
-    loadM3uContent();
+    loadXtreamContent();
   }
 
-  function clearM3uSettings() {
-    localStorage.removeItem('m3u_url');
+  function clearXtreamSettings() {
+    localStorage.removeItem('xtream_host');
+    localStorage.removeItem('xtream_user');
+    localStorage.removeItem('xtream_pass');
     document.getElementById('iptvSection').style.display = 'none';
     document.getElementById('txtIptvNav').style.display = 'none';
     closeSettingsModal();
     alert('تم حذف بيانات الاشتراك.');
   }
 
-  async function loadM3uContent() {
-    const m3uUrl = localStorage.getItem('m3u_url');
-    if (!m3uUrl) return;
+  async function loadXtreamContent() {
+    let host = localStorage.getItem('xtream_host');
+    const user = localStorage.getItem('xtream_user');
+    const pass = localStorage.getItem('xtream_pass');
+
+    if (!host || !user || !pass) return;
 
     document.getElementById('iptvSection').style.display = 'block';
     document.getElementById('txtIptvNav').style.display = 'inline';
 
     const grid = document.getElementById('iptvGrid');
-    grid.innerHTML = `<div class="empty">جاري تحميل القنوات من رابط M3U...</div>`;
+    grid.innerHTML = `<div class="empty">جاري الاتصال بسيرفر Xtream وجلب القنوات المباشرة...</div>`;
 
-    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(m3uUrl)}`;
+    // استخدام الرابط الصحيح لاستعلام الـ Xtream API
+    const targetApi = `${host}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`;
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetApi)}`;
 
     try {
       const res = await fetch(proxyUrl);
-      const data = await res.text();
+      const streams = await res.json();
 
-      const lines = data.split('\n');
-      const channels = [];
-      let currentTitle = '';
-      let currentLogo = '';
-
-      for (let i = 0; i < lines.length; i++) {
-        let line = lines[i].trim();
-        if (line.startsWith('#EXTINF:')) {
-          const tvgLogoMatch = line.match(/tvg-logo="([^"]*)"/);
-          currentLogo = tvgLogoMatch ? tvgLogoMatch[1] : '';
-          const commaIndex = line.lastIndexOf(',');
-          currentTitle = commaIndex !== -1 ? line.substring(commaIndex + 1).trim() : 'قناة';
-        } else if (line && !line.startsWith('#')) {
-          channels.push({
-            name: currentTitle,
-            logo: currentLogo || 'https://via.placeholder.com/300x450?text=Live+TV',
-            url: line
-          });
-          currentTitle = '';
-          currentLogo = '';
-        }
-      }
-
-      if (channels.length > 0) {
+      if (Array.isArray(streams) && streams.length > 0) {
         grid.innerHTML = '';
-        channels.slice(0, 60).forEach(ch => {
+        streams.slice(0, 60).forEach(stream => {
           const card = document.createElement('article');
           card.className = 'card';
+          const title = stream.name || 'قناة بث مباشر';
+          const icon = stream.stream_icon || 'https://via.placeholder.com/300x450?text=Live+TV';
+          // المسار الصحيح لبث القناة المباشرة في Xtream
+          const streamUrl = `${host}/live/${user}/${pass}/${stream.stream_id}.m3u8`;
+
           card.innerHTML = `
-            <img class="poster" src="${ch.logo}" alt="${ch.name}" onerror="this.src='https://via.placeholder.com/300x450?text=Live+TV'">
+            <img class="poster" src="${icon}" alt="${title}" onerror="this.src='https://via.placeholder.com/300x450?text=Live+TV'">
             <span class="badge-live">LIVE</span>
-            <div class="card-title">${ch.name}</div>
+            <div class="card-title">${title}</div>
             <button class="play">▶</button>
           `;
-          card.onclick = () => openCustomModal(ch.name, ch.url);
+          card.onclick = () => openCustomModal(title, streamUrl);
           grid.appendChild(card);
         });
       } else {
-        grid.innerHTML = `<div class="empty">لم يتم العثور على قنوات، تأكد من صحة رابط M3U.</div>`;
+        grid.innerHTML = `<div class="empty">لم يتم العثور على قنوات، تأكد من صحة بيانات السيرفر.</div>`;
       }
     } catch (err) {
-      grid.innerHTML = `<div class="empty">حدث خطأ أثناء تحميل القنوات من الرابط.</div>`;
+      grid.innerHTML = `<div class="empty">فشل الاتصال بسيرفر Xtream، تحقق من الرابط أو الشبكة.</div>`;
     }
   }
 
@@ -464,7 +471,7 @@
       return;
     }
 
-    if (url.includes('.m3u8') || url.includes('.ts') || url.includes('live')) {
+    if (url.includes('.m3u8') || url.includes('.ts') || url.includes('/live/')) {
       container.innerHTML = `
         <div class="video-watermark">EGY<span>MSL</span></div>
         <video id="hlsVideo" controls autoplay playsinline style="width:100%; height:100%; object-fit:contain; background:#000;"></video>
@@ -593,7 +600,7 @@
     document.getElementById('btnCatMoviesAr').textContent = t.catMoviesAr;
     document.getElementById('btnCatMoviesEn').textContent = t.catMoviesEn;
     document.getElementById('btnCatSeriesAr').textContent = t.catSeriesAr;
-    document.getElementById('btnCatSeriesEn').textContent = t.catSeriesEn;
+    document.getElementById('btnCatSeriesEn').textContent, t.catSeriesEn;
     document.getElementById('txtRecentTitle').textContent = t.recentTitle;
     document.getElementById('txtMainTitle').textContent = t.mainTitle;
     document.getElementById('txtEpSelect').textContent = t.epSelect;
@@ -611,7 +618,7 @@
   });
 
   window.addEventListener('DOMContentLoaded', () => {
-    loadM3uContent();
+    loadXtreamContent();
   });
 </script>
 </body>
