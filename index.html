@@ -157,13 +157,13 @@
 
 <footer class="footer" id="txtFooter">© 2026 Egymsl Player — جميع الحقوق محفوظة.</footer>
 
-<!-- نافذة إعدادات Xtream API الحقيقية -->
+<!-- نافذة إعدادات Xtream المباشرة -->
 <div class="modal" id="settingsModal" onclick="if(event.target===this)closeSettingsModal()">
   <div class="modal-box" style="max-width: 480px;">
     <button class="close" onclick="closeSettingsModal()">×</button>
     <div class="modal-body">
-      <h2 style="margin-top:0; font-size:18px;">⚙️ إعدادات سيرفر Xtream API</h2>
-      <p style="font-size:12px; color:#aaa;">أدخل بيانات اشتراكك الأصلیة:</p>
+      <h2 style="margin-top:0; font-size:18px;">⚙️ إعدادات سيرفر Xtream</h2>
+      <p style="font-size:12px; color:#aaa;">أدخل بيانات اشتراكك:</p>
       
       <div class="setting-group">
         <label>رابط السيرفر (Host):</label>
@@ -178,7 +178,7 @@
         <input type="password" id="settingXtreamPass" class="setting-input">
       </div>
 
-      <button onclick="saveXtreamSettings()" style="width:100%; background:var(--red); color:#fff; border:0; padding:12px; border-radius:6px; font-weight:bold; margin-top:10px;">💾 حفظ والاتصال بسيرفر Xtream</button>
+      <button onclick="saveXtreamSettings()" style="width:100%; background:var(--red); color:#fff; border:0; padding:12px; border-radius:6px; font-weight:bold; margin-top:10px;">💾 حفظ وتشغيل القنوات</button>
       <button onclick="clearXtreamSettings()" style="width:100%; background:#333; color:#ff4444; border:0; padding:8px; border-radius:6px; margin-top:8px; font-size:12px;">حذف بيانات الاشتراك</button>
     </div>
   </div>
@@ -332,7 +332,7 @@
     renderGrid('mainGrid', filtered);
   }
 
-  // --- Xtream API Engine المباشر والصحيح ---
+  // --- الحل الجذري والذكي لسحب القنوات كـ M3U من بيانات Xtream تلقائياً ---
   function openSettingsModal() {
     document.getElementById('settingXtreamHost').value = localStorage.getItem('xtream_host') || '';
     document.getElementById('settingXtreamUser').value = localStorage.getItem('xtream_user') || '';
@@ -384,33 +384,51 @@
     document.getElementById('txtIptvNav').style.display = 'inline';
 
     const grid = document.getElementById('iptvGrid');
-    grid.innerHTML = `<div class="empty">جاري الاتصال بسيرفر Xtream وجلب القنوات المباشرة...</div>`;
+    grid.innerHTML = `<div class="empty">جاري جلب القنوات المباشرة من السيرفر...</div>`;
 
-    // استخدام الرابط الصحيح لاستعلام الـ Xtream API
-    const targetApi = `${host}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`;
-    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetApi)}`;
+    // استخدام رابط الـ M3U المُتولد تلقائياً من بيانات الـ Xtream لتجنب حظر الـ API المباشر
+    const m3uTarget = `${host}/get.php?username=${user}&password=${pass}&type=m3u`;
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(m3uTarget)}`;
 
     try {
       const res = await fetch(proxyUrl);
-      const streams = await res.json();
+      const data = await res.text();
 
-      if (Array.isArray(streams) && streams.length > 0) {
+      const lines = data.split('\n');
+      const channels = [];
+      let currentTitle = '';
+      let currentLogo = '';
+
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i].trim();
+        if (line.startsWith('#EXTINF:')) {
+          const tvgLogoMatch = line.match(/tvg-logo="([^"]*)"/);
+          currentLogo = tvgLogoMatch ? tvgLogoMatch[1] : '';
+          const commaIndex = line.lastIndexOf(',');
+          currentTitle = commaIndex !== -1 ? line.substring(commaIndex + 1).trim() : 'قناة بث مباشر';
+        } else if (line && !line.startsWith('#')) {
+          channels.push({
+            name: currentTitle,
+            logo: currentLogo || 'https://via.placeholder.com/300x450?text=Live+TV',
+            url: line
+          });
+          currentTitle = '';
+          currentLogo = '';
+        }
+      }
+
+      if (channels.length > 0) {
         grid.innerHTML = '';
-        streams.slice(0, 60).forEach(stream => {
+        channels.slice(0, 60).forEach(ch => {
           const card = document.createElement('article');
           card.className = 'card';
-          const title = stream.name || 'قناة بث مباشر';
-          const icon = stream.stream_icon || 'https://via.placeholder.com/300x450?text=Live+TV';
-          // المسار الصحيح لبث القناة المباشرة في Xtream
-          const streamUrl = `${host}/live/${user}/${pass}/${stream.stream_id}.m3u8`;
-
           card.innerHTML = `
-            <img class="poster" src="${icon}" alt="${title}" onerror="this.src='https://via.placeholder.com/300x450?text=Live+TV'">
+            <img class="poster" src="${ch.logo}" alt="${ch.name}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'">
             <span class="badge-live">LIVE</span>
-            <div class="card-title">${title}</div>
+            <div class="card-title">${ch.name}</div>
             <button class="play">▶</button>
           `;
-          card.onclick = () => openCustomModal(title, streamUrl);
+          card.onclick = () => openCustomModal(ch.name, ch.url);
           grid.appendChild(card);
         });
       } else {
@@ -471,7 +489,7 @@
       return;
     }
 
-    if (url.includes('.m3u8') || url.includes('.ts') || url.includes('/live/')) {
+    if (url.includes('.m3u8') || url.includes('.ts') || url.includes('live')) {
       container.innerHTML = `
         <div class="video-watermark">EGY<span>MSL</span></div>
         <video id="hlsVideo" controls autoplay playsinline style="width:100%; height:100%; object-fit:contain; background:#000;"></video>
@@ -600,7 +618,7 @@
     document.getElementById('btnCatMoviesAr').textContent = t.catMoviesAr;
     document.getElementById('btnCatMoviesEn').textContent = t.catMoviesEn;
     document.getElementById('btnCatSeriesAr').textContent = t.catSeriesAr;
-    document.getElementById('btnCatSeriesEn').textContent, t.catSeriesEn;
+    document.getElementById('btnCatSeriesEn').textContent = t.catSeriesEn;
     document.getElementById('txtRecentTitle').textContent = t.recentTitle;
     document.getElementById('txtMainTitle').textContent = t.mainTitle;
     document.getElementById('txtEpSelect').textContent = t.epSelect;
