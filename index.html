@@ -64,7 +64,7 @@
     .modal { position: fixed; inset: 0; background: #000d; z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
     .modal.show { display: flex; }
     .modal-box { max-width: 850px; width: 100%; background: #171717; border-radius: 10px; overflow: hidden; position: relative; max-height: 90vh; display: flex; flex-direction: column; }
-    .modal-body { padding: 20px; overflow-y: auto; }
+    .modal-body { padding: 20px; overflow-y: auto; max-height: 85vh; }
     .close { position: absolute; top: 12px; left: 12px; border: 0; background: var(--red); color: #fff; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; z-index: 10; }
     .video-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 8px; overflow: hidden; margin-top: 10px; }
     .video-container iframe, .video-container video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
@@ -88,6 +88,7 @@
   </style>
 </head>
 <body>
+
 <header class="nav" id="nav">
   <a href="#" class="logo">EGY<span>MSL</span></a>
   <nav class="links">
@@ -111,7 +112,7 @@
     <div class="eyebrow">EGYMSL IPTV PLAYER</div>
     <h1 id="heroTitle">عالم الترفيه والـ IPTV المباشر</h1>
     <div class="meta"><span>4K Ultra HD</span><span id="heroBadge">تحديثات يومية</span></div>
-    <p id="heroDesc">شاهد الأفلام والمسلسلات وقنوات الـ IPTV المباشرة بسهولة عبر منصة Egymsl.</p>
+    <p id="heroDesc">شاهد أحدث الأفلام والمسلسلات بالإضافة لتشغيل اشتراكات IPTV مجاناً وبأعلى جودة على منصة Egymsl.</p>
   </div>
 </section>
 
@@ -137,10 +138,9 @@
     </div>
   </section>
 
-  <!-- قسم IPTV المباشر (يظهر فور ربط كود Xtream) -->
+  <!-- قسم IPTV المباشر -->
   <section class="section" id="iptvSection" style="display:none;">
     <div class="section-head"><h2>📺 قنوات وسيرفر الـ IPTV الخاص بك</h2></div>
-    <div class="chips" id="iptvCategoriesChips" style="margin-bottom:15px;"></div>
     <div class="grid" id="iptvGrid"></div>
   </section>
 
@@ -159,23 +159,23 @@
 
 <!-- نافذة الإعدادات -->
 <div class="modal" id="settingsModal" onclick="if(event.target===this)closeSettingsModal()">
-  <div class="modal-box" style="max-width: 500px;">
+  <div class="modal-box" style="max-width: 480px;">
     <button class="close" onclick="closeSettingsModal()">×</button>
     <div class="modal-body">
       <h2 style="margin-top:0; font-size:18px;">⚙️ إعدادات مشغل الـ IPTV (Xtream)</h2>
-      <p style="font-size:12px; color:#aaa;">أدخل بيانات سيرفر Xtream الخاص بك لجلب جميع القنوات والأفلام والمسلسلات فوراً:</p>
+      <p style="font-size:12px; color:#aaa;">أدخل بيانات سيرفر Xtream لجلب القنوات المباشرة فوراً:</p>
       
       <div class="setting-group">
         <label>رابط السيرفر (Host/URL):</label>
-        <input type="url" id="settingXtreamHost" class="setting-input" placeholder="مثال: http://mhav1.com:2095">
+        <input type="url" id="settingXtreamHost" class="setting-input" value="http://mhav1.com:2095">
       </div>
       <div class="setting-group">
         <label>اسم المستخدم (Username):</label>
-        <input type="text" id="settingXtreamUser" class="setting-input" placeholder="اسم المستخدم">
+        <input type="text" id="settingXtreamUser" class="setting-input" value="bc2859">
       </div>
       <div class="setting-group">
         <label>كلمة السر (Password):</label>
-        <input type="password" id="settingXtreamPass" class="setting-input" placeholder="كلمة السر">
+        <input type="password" id="settingXtreamPass" class="setting-input" value="">
       </div>
 
       <button onclick="saveXtreamSettings()" style="width:100%; background:var(--red); color:#fff; border:0; padding:12px; border-radius:6px; font-weight:bold; margin-top:10px;">💾 حفظ وتحديث القنوات</button>
@@ -332,10 +332,9 @@
     renderGrid('mainGrid', filtered);
   }
 
-  // --- Xtream API Engine ---
   function openSettingsModal() {
-    document.getElementById('settingXtreamHost').value = localStorage.getItem('xtream_host') || '';
-    document.getElementById('settingXtreamUser').value = localStorage.getItem('xtream_user') || '';
+    document.getElementById('settingXtreamHost').value = localStorage.getItem('xtream_host') || 'http://mhav1.com:2095';
+    document.getElementById('settingXtreamUser').value = localStorage.getItem('xtream_user') || 'bc2859';
     document.getElementById('settingXtreamPass').value = localStorage.getItem('xtream_pass') || '';
     document.getElementById('settingsModal').classList.add('show');
   }
@@ -386,11 +385,11 @@
     const grid = document.getElementById('iptvGrid');
     grid.innerHTML = `<div class="empty">جاري الاتصال بسيرفر IPTV وجلب البيانات...</div>`;
 
-    // CORS Proxy لتجاوز قيود الأمان في المتصفح
-    const apiUrl = `https://corsproxy.io/?${encodeURIComponent(`${host}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`)}`;
+    const targetApi = `${host}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetApi)}`;
 
     try {
-      const res = await fetch(apiUrl);
+      const res = await fetch(proxyUrl);
       const streams = await res.json();
 
       if (Array.isArray(streams) && streams.length > 0) {
@@ -403,7 +402,7 @@
           const streamUrl = `${host}/live/${user}/${pass}/${stream.stream_id}.m3u8`;
 
           card.innerHTML = `
-            <img class="poster" src="${icon}" alt="${title}" onerror="this.src='https://via.placeholder.com/300x450?text=Live+TV'">
+            <img class="poster" src="${icon}" alt="${title}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'">
             <span class="badge-live">LIVE</span>
             <div class="card-title">${title}</div>
             <button class="play">▶</button>
@@ -412,10 +411,10 @@
           grid.appendChild(card);
         });
       } else {
-        grid.innerHTML = `<div class="empty">عذراً، لم نتمكن من جلب قنوات هذا السيرفر، يرجى التأكد من البيانات.</div>`;
+        grid.innerHTML = `<div class="empty">عذراً، لم نتمكن من جلب قنوات هذا السيرفر، يرجى التأكد من بيانات الاشتراك.</div>`;
       }
     } catch (err) {
-      grid.innerHTML = `<div class="empty">حدث خطأ في الاتصال بسيرفر IPTV (تحقق من البيانات ورابط السيرفر).</div>`;
+      grid.innerHTML = `<div class="empty">حدث خطأ في الاتصال بسيرفر IPTV (تحقق من بيانات الدخول).</div>`;
     }
   }
 
@@ -496,15 +495,15 @@
     let embedUrl = url;
     if (url.includes('youtube.com/watch?v=')) {
       const videoId = url.split('v=')[1]?.split('&')[0];
-      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&modestbranding=1&rel=0&disablekb=1&fs=0`;
+      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&fs=1`;
     } else if (url.includes('youtu.be/')) {
       const videoId = url.split('youtu.be/')[1]?.split('?')[0];
-      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&modestbranding=1&rel=0&disablekb=1&fs=0`;
+      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&fs=1`;
     }
 
     container.innerHTML = `
       <div class="video-watermark">EGY<span>MSL</span></div>
-      <iframe src="${embedUrl}" allowfullscreen="false" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      <iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
     `;
   }
 
@@ -517,7 +516,6 @@
     document.getElementById('modal').classList.remove('show');
   }
 
-  // Search logic
   const searchInput = document.getElementById("search");
   const searchResultsDropdown = document.getElementById("searchResults");
 
@@ -619,7 +617,6 @@
     document.querySelector("#nav").classList.toggle("scrolled", window.scrollY > 40);
   });
 
-  // تشغيل القنوات تلقائياً عند فتح الموقع لو البيانات محفوظة
   window.addEventListener('DOMContentLoaded', () => {
     loadXtreamContent();
   });
