@@ -65,7 +65,7 @@
     .close { position: absolute; top: 12px; left: 12px; border: 0; background: var(--red); color: #fff; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; z-index: 10; }
     .video-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 8px; overflow: hidden; margin-top: 10px; }
     .video-container iframe, .video-container video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-    .video-watermark { position: absolute; top: 12px; right: 12px; color: #fff; font-weight: 900; font-size: 13px; background: rgba(0, 0, 0, 0.7); padding: 3px 8px; border-radius: 4px; z-index: 10; letter-spacing: -0.5px; pointer-events: none; border: 1px solid rgba(255, 255, 255, 0.15); }
+    .video-watermark { position: absolute; top: 12px; left: 15px; color: #fff; font-weight: 900; font-size: 15px; background: rgba(0, 0, 0, 0.6); padding: 4px 10px; border-radius: 4px; z-index: 99; letter-spacing: -0.5px; pointer-events: none; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); }
     .video-watermark span { color: var(--red); }
     .episodes-box { margin-top: 15px; background: #111; padding: 12px; border-radius: 6px; }
     .episodes-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-height: 120px; overflow-y: auto; }
@@ -366,6 +366,7 @@
       if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&fs=1`;
     }
 
+    // تم إضافة الـ watermark هنا عشان تظهر فوق الـ iframe كمان لأي فيلم تفتحه!
     container.innerHTML = `
       <div class="video-watermark">EGY<span>MSL</span></div>
       <iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
@@ -470,10 +471,12 @@
     applyFilters();
   }
 
-  document.querySelector("#searchBtn").onclick = () => {
+  function toggleSearch() {
     searchInput.classList.toggle("open");
     if (searchInput.classList.contains("open")) searchInput.focus();
-  };
+  }
+
+  document.querySelector("#searchBtn").onclick = toggleSearch;
 
   window.addEventListener("scroll", () => {
     document.querySelector("#nav").classList.toggle("scrolled", window.scrollY > 40);
