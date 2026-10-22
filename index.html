@@ -61,8 +61,6 @@
     .play { position: absolute; inset: auto 10px 10px auto; width: 34px; height: 34px; border: 0; border-radius: 50%; background: var(--red); color: #fff; opacity: 0; transition: .2s; font-size: 13px; }
     .card:hover .play { opacity: 1; }
     .empty { padding: 30px; text-align: center; color: #aaa; grid-column: 1 / -1; font-size: 14px; }
-    .cat-card { background: #181818; border: 1px solid #333; padding: 20px; border-radius: 8px; text-align: center; font-weight: bold; cursor: pointer; transition: 0.2s; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; min-height: 90px; }
-    .cat-card:hover { background: var(--red); border-color: var(--red); transform: translateY(-3px); }
     .modal { position: fixed; inset: 0; background: #000d; z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
     .modal.show { display: flex; }
     .modal-box { max-width: 850px; width: 100%; background: #171717; border-radius: 10px; overflow: hidden; position: relative; max-height: 90vh; display: flex; flex-direction: column; }
@@ -185,10 +183,7 @@
   <div style="width:100%; height:100%; display:flex; flex-direction:column; background:#080808; overflow-y:auto; padding:20px 5%;">
     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #222; padding-bottom:15px; margin-bottom:20px;">
       <h2 style="color:var(--red); margin:0; font-size:24px;" id="portalHeaderTitle">🚀 بوابة اشتراك الـ IPTV</h2>
-      <div style="display:flex; gap:10px;">
-        <button id="backToCatBtn" onclick="backToCategories()" style="background:#333; color:#fff; border:0; padding:8px 16px; border-radius:6px; font-weight:bold; display:none;">← العودة للأقسام</button>
-        <button onclick="closeIptvPortal()" style="background:#222; color:#fff; border:0; padding:8px 16px; border-radius:6px; font-weight:bold;">✕ العودة للرئيسية</button>
-      </div>
+      <button onclick="closeIptvPortal()" style="background:#222; color:#fff; border:0; padding:8px 16px; border-radius:6px; font-weight:bold;">✕ العودة للرئيسية</button>
     </div>
     
     <div id="portalTabs" style="display:flex; gap:10px; margin-bottom:25px; flex-wrap:wrap;">
@@ -236,8 +231,6 @@
   let currentCategory = 'all';
   let siteLang = 'ar';
   let hlsPlayer = null;
-  let currentPortalTab = 'live';
-  let currentCatId = null;
 
   const dict = {
     ar: {
@@ -411,24 +404,14 @@
     document.getElementById('iptvPortalModal').style.display = 'none';
   }
 
-  function backToCategories() {
-    currentCatId = null;
-    document.getElementById('backToCatBtn').style.display = 'none';
-    switchIptvTab(currentPortalTab);
-  }
-
   async function switchIptvTab(type, btn) {
-    currentPortalTab = type;
-    currentCatId = null;
-    document.getElementById('backToCatBtn').style.display = 'none';
-
     if (btn) {
       document.querySelectorAll('#portalTabs .chip').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
     }
 
     const grid = document.getElementById('portalContentGrid');
-    grid.innerHTML = `<div class="empty">جاري تحميل التصنيفات...</div>`;
+    grid.innerHTML = `<div class="empty">جاري جلب المحتوى مباشرة من السيرفر...</div>`;
 
     const host = localStorage.getItem('xtream_host');
     const user = localStorage.getItem('xtream_user');
@@ -439,9 +422,9 @@
       return;
     }
 
-    let action = 'get_live_categories';
-    if (type === 'movies') action = 'get_vod_categories';
-    if (type === 'series') action = 'get_series_categories';
+    let action = 'get_live_streams';
+    if (type === 'movies') action = 'get_vod_streams';
+    if (type === 'series') action = 'get_series';
 
     const rawApi = `${host}/player_api.php?username=${user}&password=${pass}&action=${action}`;
     const apiTarget = `https://corsproxy.io/?` + encodeURIComponent(rawApi);
@@ -449,51 +432,12 @@
     try {
       const res = await fetch(apiTarget);
       const dataText = await res.text();
-      const cats = JSON.parse(dataText);
-
-      if (Array.isArray(cats) && cats.length > 0) {
-        grid.innerHTML = '';
-        cats.forEach(cat => {
-          const div = document.createElement('div');
-          div.className = 'cat-card';
-          div.textContent = cat.category_name || 'قسم بدون اسم';
-          div.onclick = () => loadItemsByCategory(type, cat.category_id, cat.category_name);
-          grid.appendChild(div);
-        });
-      } else {
-        grid.innerHTML = `<div class="empty">لا توجد تصنيفات متاحة.</div>`;
-      }
-    } catch (err) {
-      grid.innerHTML = `<div class="empty">حدث خطأ أثناء جلب التصنيفات، تحقق من بيانات الاشتراك.</div>`;
-    }
-  }
-
-  async function loadItemsByCategory(type, catId, catName) {
-    currentCatId = catId;
-    document.getElementById('backToCatBtn').style.display = 'inline-block';
-    
-    const grid = document.getElementById('portalContentGrid');
-    grid.innerHTML = `<div class="empty">جاري جلب محتوى قسم (${catName})...</div>`;
-
-    const host = localStorage.getItem('xtream_host');
-    const user = localStorage.getItem('xtream_user');
-    const pass = localStorage.getItem('xtream_pass');
-
-    let action = 'get_live_streams';
-    if (type === 'movies') action = 'get_vod_streams';
-    if (type === 'series') action = 'get_series';
-
-    let rawApi = `${host}/player_api.php?username=${user}&password=${pass}&action=${action}&category_id=${catId}`;
-    const apiTarget = `https://corsproxy.io/?` + encodeURIComponent(rawApi);
-
-    try {
-      const res = await fetch(apiTarget);
-      const dataText = await res.text();
-      const items = JSON.parse(dataText);
+      let items = JSON.parse(dataText);
 
       if (Array.isArray(items) && items.length > 0) {
         grid.innerHTML = '';
-        items.forEach(item => {
+        // نعرض أول 100 عنصر عشان السرعة وعدم تعليق الصفحة
+        items.slice(0, 100).forEach(item => {
           const card = document.createElement('article');
           card.className = 'card';
           
@@ -523,10 +467,10 @@
           grid.appendChild(card);
         });
       } else {
-        grid.innerHTML = `<div class="empty">لا توجد عناصر في هذا القسم حالياً.</div>`;
+        grid.innerHTML = `<div class="empty">لا توجد محتويات متاحة في هذا القسم حالياً.</div>`;
       }
     } catch (err) {
-      grid.innerHTML = `<div class="empty">تعذر تحميل محتوى القسم.</div>`;
+      grid.innerHTML = `<div class="empty">حدث خطأ أثناء الاتصال بالسيرفر، تأكد من صحة الاشتراك.</div>`;
     }
   }
 
