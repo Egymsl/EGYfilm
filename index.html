@@ -163,7 +163,7 @@
       
       <div class="setting-group">
         <label>رابط السيرفر (Host):</label>
-        <input type="text" id="settingXtreamHost" class="setting-input" placeholder="http://mhav1.com:2095">
+        <input type="text" id="settingXtreamHost" class="setting-input" placeholder="https://mhav1.com:25463">
       </div>
       <div class="setting-group">
         <label>اسم المستخدم (Username):</label>
@@ -353,7 +353,7 @@
   }
 
   function openSettingsModal() {
-    document.getElementById('settingXtreamHost').value = localStorage.getItem('xtream_host') || 'http://mhav1.com:2095';
+    document.getElementById('settingXtreamHost').value = localStorage.getItem('xtream_host') || 'https://mhav1.com:25463';
     document.getElementById('settingXtreamUser').value = localStorage.getItem('xtream_user') || 'bc28590';
     document.getElementById('settingXtreamPass').value = localStorage.getItem('xtream_pass') || '753108643';
     document.getElementById('settingsModal').classList.add('show');
@@ -425,9 +425,9 @@
     }
 
     const grid = document.getElementById('portalContentGrid');
-    grid.innerHTML = `<div class="empty">جاري تحميل أقسام سيرفر الـ IPTV...</div>`;
+    grid.innerHTML = `<div class="empty">جاري تحميل أقسام سيرفر الـ IPTV الآمن...</div>`;
 
-    let host = localStorage.getItem('xtream_host') || 'http://mhav1.com:2095';
+    let host = localStorage.getItem('xtream_host') || 'https://mhav1.com:25463';
     let user = localStorage.getItem('xtream_user') || 'bc28590';
     let pass = localStorage.getItem('xtream_pass') || '753108643';
 
@@ -435,8 +435,7 @@
     if (type === 'movies') action = 'get_vod_categories';
     if (type === 'series') action = 'get_series_categories';
 
-    const rawApi = `${host}/player_api.php?username=${user}&password=${pass}&action=${action}`;
-    const apiTarget = `https://api.allorigins.win/raw?url=` + encodeURIComponent(rawApi);
+    const apiTarget = `${host}/player_api.php?username=${user}&password=${pass}&action=${action}`;
 
     try {
       const res = await fetch(apiTarget);
@@ -456,7 +455,7 @@
         grid.innerHTML = `<div class="empty">لا توجد أقسام متاحة لهذا النمط.</div>`;
       }
     } catch (err) {
-      grid.innerHTML = `<div class="empty">تعذر الاتصال بالسيرفر، تأكد من إعدادات الاشتراك.</div>`;
+      grid.innerHTML = `<div class="empty">تعذر الاتصال بالبورت الآمن، تأكد من إعدادات الاشتراك (https://mhav1.com:25463).</div>`;
     }
   }
 
@@ -466,7 +465,7 @@
     const grid = document.getElementById('portalContentGrid');
     grid.innerHTML = `<div class="empty">جاري تحميل محتوى قسم (${catName})...</div>`;
 
-    let host = localStorage.getItem('xtream_host') || 'http://mhav1.com:2095';
+    let host = localStorage.getItem('xtream_host') || 'https://mhav1.com:25463';
     let user = localStorage.getItem('xtream_user') || 'bc28590';
     let pass = localStorage.getItem('xtream_pass') || '753108643';
 
@@ -474,8 +473,7 @@
     if (type === 'movies') action = 'get_vod_streams';
     if (type === 'series') action = 'get_series';
 
-    const rawApi = `${host}/player_api.php?username=${user}&password=${pass}&action=${action}&category_id=${catId}`;
-    const apiTarget = `https://api.allorigins.win/raw?url=` + encodeURIComponent(rawApi);
+    const apiTarget = `${host}/player_api.php?username=${user}&password=${pass}&action=${action}&category_id=${catId}`;
 
     try {
       const res = await fetch(apiTarget);
@@ -522,12 +520,11 @@
   }
 
   async function loadSeriesDetails(seriesId, seriesTitle) {
-    let host = localStorage.getItem('xtream_host') || 'http://mhav1.com:2095';
+    let host = localStorage.getItem('xtream_host') || 'https://mhav1.com:25463';
     let user = localStorage.getItem('xtream_user') || 'bc28590';
     let pass = localStorage.getItem('xtream_pass') || '753108643';
 
-    const rawApi = `${host}/player_api.php?username=${user}&password=${pass}&action=get_series_info&series_id=${seriesId}`;
-    const apiTarget = `https://api.allorigins.win/raw?url=` + encodeURIComponent(rawApi);
+    const apiTarget = `${host}/player_api.php?username=${user}&password=${pass}&action=get_series_info&series_id=${seriesId}`;
 
     try {
       const res = await fetch(apiTarget);
