@@ -436,7 +436,6 @@
 
       if (Array.isArray(items) && items.length > 0) {
         grid.innerHTML = '';
-        // نعرض أول 100 عنصر عشان السرعة وعدم تعليق الصفحة
         items.slice(0, 100).forEach(item => {
           const card = document.createElement('article');
           card.className = 'card';
