@@ -198,7 +198,6 @@
     </div>
   </div>
 </div>
-
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
@@ -386,8 +385,8 @@
     grid.innerHTML = `<div class="empty">جاري جلب القنوات المباشرة من السيرفر...</div>`;
 
     const m3uTarget = `${host}/get.php?username=${user}&password=${pass}&type=m3u`;
-    // Fɔ dis pat, wi yuz di lokal proxy sef we run na port 3000 fɔ baypas CORS an port blocking
-    const proxyUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(m3uTarget)}`;
+    // ربط الموقع بالسيرفر الأونلاين الجديد على Vercel لتجاوز الحظر تماماً
+    const proxyUrl = `https://eg-yfilm.vercel.app/proxy?url=${encodeURIComponent(m3uTarget)}`;
 
     try {
       const res = await fetch(proxyUrl);
@@ -434,7 +433,7 @@
         grid.innerHTML = `<div class="empty">لم يتم العثور على قنوات، تأكد من صحة بيانات السيرفر.</div>`;
       }
     } catch (err) {
-      grid.innerHTML = `<div class="empty">فشل الاتصال بسيرفر Xtream عبر السيرفر المحلي، تأكد من تشغيل الـ Node.js proxy.</div>`;
+      grid.innerHTML = `<div class="empty">فشل الاتصال بسيرفر Xtream عبر السيرفر الأونلاين.</div>`;
     }
   }
 
