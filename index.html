@@ -332,7 +332,6 @@
     renderGrid('mainGrid', filtered);
   }
 
-  // --- الحل الجذري والذكي لسحب القنوات كـ M3U من بيانات Xtream تلقائياً ---
   function openSettingsModal() {
     document.getElementById('settingXtreamHost').value = localStorage.getItem('xtream_host') || '';
     document.getElementById('settingXtreamUser').value = localStorage.getItem('xtream_user') || '';
@@ -386,9 +385,9 @@
     const grid = document.getElementById('iptvGrid');
     grid.innerHTML = `<div class="empty">جاري جلب القنوات المباشرة من السيرفر...</div>`;
 
-    // استخدام رابط الـ M3U المُتولد تلقائياً من بيانات الـ Xtream لتجنب حظر الـ API المباشر
     const m3uTarget = `${host}/get.php?username=${user}&password=${pass}&type=m3u`;
-    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(m3uTarget)}`;
+    // Fɔ dis pat, wi yuz di lokal proxy sef we run na port 3000 fɔ baypas CORS an port blocking
+    const proxyUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(m3uTarget)}`;
 
     try {
       const res = await fetch(proxyUrl);
@@ -435,7 +434,7 @@
         grid.innerHTML = `<div class="empty">لم يتم العثور على قنوات، تأكد من صحة بيانات السيرفر.</div>`;
       }
     } catch (err) {
-      grid.innerHTML = `<div class="empty">فشل الاتصال بسيرفر Xtream، تحقق من الرابط أو الشبكة.</div>`;
+      grid.innerHTML = `<div class="empty">فشل الاتصال بسيرفر Xtream عبر السيرفر المحلي، تأكد من تشغيل الـ Node.js proxy.</div>`;
     }
   }
 
