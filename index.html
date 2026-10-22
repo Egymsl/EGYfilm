@@ -432,16 +432,25 @@
     try {
       const res = await fetch(apiTarget);
       const dataText = await res.text();
-      let items = JSON.parse(dataText);
+      let parsedData = JSON.parse(dataText);
 
-      if (Array.isArray(items) && items.length > 0) {
+      // تحويل البيانات إلى مصفوفة بغض النظر عن شكل استجابة السيرفر
+      let items = [];
+      if (Array.isArray(parsedData)) {
+        items = parsedData;
+      } else if (parsedData && typeof parsedData === 'object') {
+        // لو السيرفر رجع الكائن بداخله بيانات أو قاموس
+        items = Object.values(parsedData).flat().filter(x => x && typeof x === 'object');
+      }
+
+      if (items.length > 0) {
         grid.innerHTML = '';
         items.slice(0, 100).forEach(item => {
           const card = document.createElement('article');
           card.className = 'card';
           
-          let title = item.name || item.title || 'بدون عنوان';
-          let poster = item.stream_icon || item.cover || 'https://via.placeholder.com/300x450?text=No+Poster';
+          let title = item.name || item.title || item.stream_display_name || 'بدون عنوان';
+          let poster = item.stream_icon || item.cover || item.movie_image || 'https://via.placeholder.com/300x450?text=No+Poster';
           let badge = type === 'live' ? '<span class="badge-live">LIVE</span>' : '<span class="badge-new">VOD</span>';
 
           card.innerHTML = `
@@ -466,7 +475,7 @@
           grid.appendChild(card);
         });
       } else {
-        grid.innerHTML = `<div class="empty">لا توجد محتويات متاحة في هذا القسم حالياً.</div>`;
+        grid.innerHTML = `<div class="empty">لا توجد محتويات متاحة في هذا القسم حالياً (استجابة فارغة من السيرفر).</div>`;
       }
     } catch (err) {
       grid.innerHTML = `<div class="empty">حدث خطأ أثناء الاتصال بالسيرفر، تأكد من صحة الاشتراك.</div>`;
