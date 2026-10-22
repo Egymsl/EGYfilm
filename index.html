@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Egymsl — عالم الترفيه و الـ IPTV</title>
-  <meta name="description" content="Egymsl - منصة الترفيه الشاملة وأحدث الأفلام والمسلسلات ومشغل IPTV كامل.">
+  <title>Egymsl — عالم الترفيه</title>
+  <meta name="description" content="Egymsl - منصة الترفيه الشاملة وأحدث الأفلام والمسلسلات.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -28,8 +28,6 @@
     .search { width: 0; opacity: 0; border: 1px solid #555; background: #111; color: #fff; padding: 8px 12px; border-radius: 6px; transition: .25s; }
     .search.open { width: 180px; opacity: 1; }
     .icon { border: 0; background: transparent; color: #fff; font-size: 20px; }
-    .btn-settings { background: #222; border: 1px solid #444; color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
-    .btn-settings:hover { background: #333; }
     .search-results-dropdown { position: absolute; top: 110%; left: 0; right: 0; background: #121212; border: 1px solid #333; border-radius: 8px; max-height: 380px; overflow-y: auto; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.9); display: none; }
     .search-results-dropdown.show { display: block; }
     .search-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-bottom: 1px solid #222; cursor: pointer; transition: background 0.2s; }
@@ -56,13 +54,10 @@
     .card:hover { transform: scale(1.05); z-index: 2; }
     .poster { width: 100%; height: 100%; object-fit: cover; }
     .card-title { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, #000 90%, #0000 100%); padding: 15px 8px 8px; text-align: center; font-weight: 700; font-size: 12px; }
-    .badge-live { position: absolute; top: 8px; right: 8px; background: #00c853; color:#fff; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; }
     .badge-new { position: absolute; top: 8px; right: 8px; background: var(--red); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; }
     .play { position: absolute; inset: auto 10px 10px auto; width: 34px; height: 34px; border: 0; border-radius: 50%; background: var(--red); color: #fff; opacity: 0; transition: .2s; font-size: 13px; }
     .card:hover .play { opacity: 1; }
     .empty { padding: 30px; text-align: center; color: #aaa; grid-column: 1 / -1; font-size: 14px; }
-    .cat-card { background: #181818; border: 1px solid #333; padding: 18px 12px; border-radius: 8px; text-align: center; font-weight: bold; cursor: pointer; transition: 0.2s; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; min-height: 80px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-    .cat-card:hover { background: var(--red); border-color: var(--red); transform: translateY(-3px); }
     .modal { position: fixed; inset: 0; background: #000d; z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
     .modal.show { display: flex; }
     .modal-box { max-width: 850px; width: 100%; background: #171717; border-radius: 10px; overflow: hidden; position: relative; max-height: 90vh; display: flex; flex-direction: column; }
@@ -76,9 +71,6 @@
     .episodes-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-height: 120px; overflow-y: auto; }
     .ep-btn { background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
     .ep-btn.active { background: var(--red); border-color: var(--red); font-weight: bold; }
-    .setting-group { margin-bottom: 15px; }
-    .setting-group label { display: block; font-size: 13px; color: #ccc; margin-bottom: 6px; }
-    .setting-input { width: 100%; background: #222; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 6px; font-size: 13px; }
     .footer { border-top: 1px solid #222; padding: 30px 5%; color: #777; text-align: center; font-size: 13px; }
     @media(max-width:700px){
       .links { display: none; }
@@ -97,10 +89,8 @@
     <a href="#home" id="txtHome">الرئيسية</a>
     <a href="#recently" id="txtRecentNav">أحدث الإضافات</a>
     <a href="#content" id="txtLibraryNav">المكتبة</a>
-    <a href="#" id="txtIptvPortal" onclick="openIptvPortal()" style="display:none; color:var(--red); font-weight:800;">🚀 بوابة الـ IPTV والاشتراك</a>
   </nav>
   <div class="actions">
-    <button class="btn-settings" onclick="openSettingsModal()">⚙️ الإعدادات</button>
     <div class="search-wrapper">
       <input id="search" class="search" placeholder="ابحث عن فيلم أو مسلسل..." aria-label="بحث" autocomplete="off">
       <div id="searchResults" class="search-results-dropdown"></div>
@@ -111,10 +101,10 @@
 
 <section class="hero" id="home">
   <div class="hero-content">
-    <div class="eyebrow">EGYMSL IPTV PLAYER</div>
-    <h1 id="heroTitle">عالم الترفيه والـ IPTV المباشر</h1>
+    <div class="eyebrow">EGYMSL ENTERTAINMENT</div>
+    <h1 id="heroTitle">عالم الترفيه والأفلام والمسلسلات</h1>
     <div class="meta"><span>4K Ultra HD</span><span id="heroBadge">تحديثات يومية</span></div>
-    <p id="heroDesc">شاهد أحدث الأفلام والمسلسلات بالإضافة لتشغيل اشتراكات IPTV مجاناً وبأعلى جودة على منصة Egymsl.</p>
+    <p id="heroDesc">شاهد أحدث الأفلام والمسلسلات العربية والأجنبية بأعلى جودة على منصة Egymsl.</p>
   </div>
 </section>
 
@@ -153,56 +143,6 @@
 
 <footer class="footer" id="txtFooter">© 2026 Egymsl Player — جميع الحقوق محفوظة.</footer>
 
-<!-- نافذة إعدادات Xtream المباشرة -->
-<div class="modal" id="settingsModal" onclick="if(event.target===this)closeSettingsModal()">
-  <div class="modal-box" style="max-width: 480px;">
-    <button class="close" onclick="closeSettingsModal()">×</button>
-    <div class="modal-body">
-      <h2 style="margin-top:0; font-size:18px;">⚙️ إعدادات سيرفر Xtream</h2>
-      <p style="font-size:12px; color:#aaa;">أدخل بيانات اشتراكك:</p>
-      
-      <div class="setting-group">
-        <label>رابط السيرفر (Host):</label>
-        <input type="text" id="settingXtreamHost" class="setting-input" placeholder="http://mhav1.com:2095">
-      </div>
-      <div class="setting-group">
-        <label>اسم المستخدم (Username):</label>
-        <input type="text" id="settingXtreamUser" class="setting-input">
-      </div>
-      <div class="setting-group">
-        <label>كلمة المرور (Password):</label>
-        <input type="password" id="settingXtreamPass" class="setting-input">
-      </div>
-
-      <button onclick="saveXtreamSettings()" style="width:100%; background:var(--red); color:#fff; border:0; padding:12px; border-radius:6px; font-weight:bold; margin-top:10px;">💾 حفظ والدخول للبوابة</button>
-      <button onclick="clearXtreamSettings()" style="width:100%; background:#333; color:#ff4444; border:0; padding:8px; border-radius:6px; margin-top:8px; font-size:12px;">حذف بيانات الاشتراك</button>
-    </div>
-  </div>
-</div>
-
-<!-- صفحة الـ IPTV المستقلة (البوابة الخارجية) -->
-<div class="modal" id="iptvPortalModal" style="background:#080808; padding:0;">
-  <div style="width:100%; height:100%; display:flex; flex-direction:column; background:#080808; overflow-y:auto; padding:20px 5%;">
-    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #222; padding-bottom:15px; margin-bottom:20px;">
-      <h2 style="color:var(--red); margin:0; font-size:24px;" id="portalHeaderTitle">🚀 بوابة اشتراك الـ IPTV</h2>
-      <div style="display:flex; gap:10px;">
-        <button id="backToCatBtn" onclick="backToCategories()" style="background:#333; color:#fff; border:0; padding:8px 16px; border-radius:6px; font-weight:bold; display:none;">← العودة للأقسام</button>
-        <button onclick="closeIptvPortal()" style="background:#222; color:#fff; border:0; padding:8px 16px; border-radius:6px; font-weight:bold;">✕ العودة للرئيسية</button>
-      </div>
-    </div>
-    
-    <div id="portalTabs" style="display:flex; gap:10px; margin-bottom:25px; flex-wrap:wrap;">
-      <button class="chip active" onclick="switchIptvTab('live', this)">📺 القنوات المباشرة (Live)</button>
-      <button class="chip" onclick="switchIptvTab('movies', this)">🎬 أفلام الاشتراك (VOD)</button>
-      <button class="chip" onclick="switchIptvTab('series', this)">📺 مسلسلات الاشتراك</button>
-    </div>
-
-    <div id="portalContentGrid" class="grid">
-      <div class="empty">جاري تحميل المحتوى...</div>
-    </div>
-  </div>
-</div>
-
 <!-- نافذة العرض والمشغل -->
 <div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
@@ -236,7 +176,6 @@
   let currentCategory = 'all';
   let siteLang = 'ar';
   let hlsPlayer = null;
-  let currentPortalTab = 'live';
 
   const dict = {
     ar: {
@@ -244,9 +183,9 @@
       home: "الرئيسية",
       recentNav: "أحدث الإضافات",
       libraryNav: "المكتبة",
-      heroTitle: "عالم الترفيه والـ IPTV المباشر",
+      heroTitle: "عالم الترفيه والأفلام والمسلسلات",
       heroBadge: "تحديثات يومية",
-      heroDesc: "شاهد أحدث الأفلام والمسلسلات بالإضافة لتشغيل اشتراكات IPTV مجاناً وبأعلى جودة على منصة Egymsl.",
+      heroDesc: "شاهد أحدث الأفلام والمسلسلات العربية والأجنبية بأعلى جودة على منصة Egymsl.",
       langTitle: "لغة الموقع والتصنيفات",
       siteLangLabel: "لغة الواجهة:",
       categoryLabel: "التصنيف:",
@@ -267,9 +206,9 @@
       home: "Home",
       recentNav: "Recently Added",
       libraryNav: "Library",
-      heroTitle: "Unlimited Entertainment & IPTV",
+      heroTitle: "Unlimited Movies & Series",
       heroBadge: "Daily Updates",
-      heroDesc: "Watch movies, series, and live IPTV streams for free on Egymsl.",
+      heroDesc: "Watch the latest movies and series on Egymsl.",
       langTitle: "Website Language & Categories",
       siteLangLabel: "Interface Language:",
       categoryLabel: "Category:",
@@ -352,236 +291,6 @@
     renderGrid('mainGrid', filtered);
   }
 
-  function openSettingsModal() {
-    document.getElementById('settingXtreamHost').value = localStorage.getItem('xtream_host') || 'http://mhav1.com:2095';
-    document.getElementById('settingXtreamUser').value = localStorage.getItem('xtream_user') || 'bc28590';
-    document.getElementById('settingXtreamPass').value = localStorage.getItem('xtream_pass') || '753108643';
-    document.getElementById('settingsModal').classList.add('show');
-  }
-
-  function closeSettingsModal() {
-    document.getElementById('settingsModal').classList.remove('show');
-  }
-
-  function saveXtreamSettings() {
-    let host = document.getElementById('settingXtreamHost').value.trim();
-    const user = document.getElementById('settingXtreamUser').value.trim();
-    const pass = document.getElementById('settingXtreamPass').value.trim();
-
-    if (!host || !user || !pass) {
-      alert('برجاء إدخال بيانات الـ Xtream كاملة.');
-      return;
-    }
-
-    if (host.endsWith('/')) host = host.slice(0, -1);
-    localStorage.setItem('xtream_host', host);
-    localStorage.setItem('xtream_user', user);
-    localStorage.setItem('xtream_pass', pass);
-
-    closeSettingsModal();
-    checkXtreamStatus();
-    openIptvPortal();
-  }
-
-  function clearXtreamSettings() {
-    localStorage.removeItem('xtream_host');
-    localStorage.removeItem('xtream_user');
-    localStorage.removeItem('xtream_pass');
-    document.getElementById('txtIptvPortal').style.display = 'none';
-    closeSettingsModal();
-    alert('تم حذف بيانات الاشتراك.');
-  }
-
-  function checkXtreamStatus() {
-    const host = localStorage.getItem('xtream_host');
-    const user = localStorage.getItem('xtream_user');
-    const pass = localStorage.getItem('xtream_pass');
-    if (host && user && pass) {
-      document.getElementById('txtIptvPortal').style.display = 'inline';
-    }
-  }
-
-  function openIptvPortal() {
-    document.getElementById('iptvPortalModal').style.display = 'flex';
-    switchIptvTab('live', document.querySelector('#portalTabs .chip'));
-  }
-
-  function closeIptvPortal() {
-    document.getElementById('iptvPortalModal').style.display = 'none';
-  }
-
-  function backToCategories() {
-    document.getElementById('backToCatBtn').style.display = 'none';
-    switchIptvTab(currentPortalTab);
-  }
-
-  async function switchIptvTab(type, btn) {
-    currentPortalTab = type;
-    document.getElementById('backToCatBtn').style.display = 'none';
-
-    if (btn) {
-      document.querySelectorAll('#portalTabs .chip').forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-    }
-
-    const grid = document.getElementById('portalContentGrid');
-    grid.innerHTML = `<div class="empty">جاري تحميل أقسام سيرفر الـ IPTV عبر البروكسي...</div>`;
-
-    let host = localStorage.getItem('xtream_host') || 'http://mhav1.com:2095';
-    let user = localStorage.getItem('xtream_user') || 'bc28590';
-    let pass = localStorage.getItem('xtream_pass') || '753108643';
-
-    let action = 'get_live_categories';
-    if (type === 'movies') action = 'get_vod_categories';
-    if (type === 'series') action = 'get_series_categories';
-
-    const rawApi = `${host}/player_api.php?username=${user}&password=${pass}&action=${action}`;
-    const apiTarget = `https://corsproxy.io/?` + encodeURIComponent(rawApi);
-
-    try {
-      const res = await fetch(apiTarget);
-      const dataText = await res.text();
-      const cats = JSON.parse(dataText);
-
-      if (Array.isArray(cats) && cats.length > 0) {
-        grid.innerHTML = '';
-        cats.forEach(cat => {
-          const div = document.createElement('div');
-          div.className = 'cat-card';
-          div.textContent = cat.category_name || 'قسم بدون اسم';
-          div.onclick = () => loadItemsByCategory(type, cat.category_id, cat.category_name);
-          grid.appendChild(div);
-        });
-      } else {
-        grid.innerHTML = `<div class="empty">لا توجد أقسام متاحة لهذا النمط.</div>`;
-      }
-    } catch (err) {
-      grid.innerHTML = `<div class="empty">تعذر الاتصال بالسيرفر، تأكد من إعدادات الاشتراك.</div>`;
-    }
-  }
-
-  async function loadItemsByCategory(type, catId, catName) {
-    document.getElementById('backToCatBtn').style.display = 'inline-block';
-    
-    const grid = document.getElementById('portalContentGrid');
-    grid.innerHTML = `<div class="empty">جاري تحميل محتوى قسم (${catName})...</div>`;
-
-    let host = localStorage.getItem('xtream_host') || 'http://mhav1.com:2095';
-    let user = localStorage.getItem('xtream_user') || 'bc28590';
-    let pass = localStorage.getItem('xtream_pass') || '753108643';
-
-    let action = 'get_live_streams';
-    if (type === 'movies') action = 'get_vod_streams';
-    if (type === 'series') action = 'get_series';
-
-    const rawApi = `${host}/player_api.php?username=${user}&password=${pass}&action=${action}&category_id=${catId}`;
-    const apiTarget = `https://corsproxy.io/?` + encodeURIComponent(rawApi);
-
-    try {
-      const res = await fetch(apiTarget);
-      const dataText = await res.text();
-      const items = JSON.parse(dataText);
-
-      if (Array.isArray(items) && items.length > 0) {
-        grid.innerHTML = '';
-        items.forEach(item => {
-          const card = document.createElement('article');
-          card.className = 'card';
-          
-          let title = item.name || item.title || 'بدون عنوان';
-          let poster = item.stream_icon || item.cover || 'https://via.placeholder.com/300x450?text=No+Poster';
-          let badge = type === 'live' ? '<span class="badge-live">LIVE</span>' : '<span class="badge-new">VOD</span>';
-
-          card.innerHTML = `
-            <img class="poster" src="${poster}" alt="${title}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'">
-            ${badge}
-            <div class="card-title">${title}</div>
-            <button class="play">▶</button>
-          `;
-
-          card.onclick = () => {
-            if (type === 'live') {
-              const streamUrl = `${host}/live/${user}/${pass}/${item.stream_id}.m3u8`;
-              openCustomModal(title, streamUrl);
-            } else if (type === 'movies') {
-              const movieUrl = `${host}/movie/${user}/${pass}/${item.stream_id}.${item.container_extension || 'mp4'}`;
-              openCustomModal(title, movieUrl);
-            } else if (type === 'series') {
-              loadSeriesDetails(item.series_id, title);
-            }
-          };
-
-          grid.appendChild(card);
-        });
-      } else {
-        grid.innerHTML = `<div class="empty">لا توجد محتويات داخل هذا القسم.</div>`;
-      }
-    } catch (err) {
-      grid.innerHTML = `<div class="empty">تعذر جلب قنوات هذا القسم.</div>`;
-    }
-  }
-
-  async function loadSeriesDetails(seriesId, seriesTitle) {
-    let host = localStorage.getItem('xtream_host') || 'http://mhav1.com:2095';
-    let user = localStorage.getItem('xtream_user') || 'bc28590';
-    let pass = localStorage.getItem('xtream_pass') || '753108643';
-
-    const rawApi = `${host}/player_api.php?username=${user}&password=${pass}&action=get_series_info&series_id=${seriesId}`;
-    const apiTarget = `https://corsproxy.io/?` + encodeURIComponent(rawApi);
-
-    try {
-      const res = await fetch(apiTarget);
-      const data = await res.json();
-      
-      if (data && data.episodes) {
-        document.getElementById('modalTitle').textContent = seriesTitle;
-        const epBox = document.getElementById('episodesBox');
-        const epList = document.getElementById('episodesList');
-        const videoContainer = document.getElementById('videoContainer');
-        
-        epList.innerHTML = '';
-        epBox.style.display = 'block';
-
-        let firstEpUrl = '';
-        let seasons = Object.keys(data.episodes);
-        
-        seasons.forEach(seasonNum => {
-          data.episodes[seasonNum].forEach(ep => {
-            const btn = document.createElement('button');
-            btn.className = 'ep-btn';
-            btn.innerText = `موسم ${seasonNum} - حلقة ${ep.episode_num}`;
-            
-            const epUrl = `${host}/series/${user}/${pass}/${ep.id}.${ep.container_extension || 'mp4'}`;
-            if(!firstEpUrl) {
-              firstEpUrl = epUrl;
-              btn.classList.add('active');
-            }
-
-            btn.onclick = () => {
-              document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
-              btn.classList.add('active');
-              renderSmartPlayer(epUrl, videoContainer);
-            };
-            epList.appendChild(btn);
-          });
-        });
-
-        renderSmartPlayer(firstEpUrl, videoContainer);
-        document.getElementById('modal').classList.add('show');
-      }
-    } catch(e) {
-      alert('تعذر جلب حلقات المسلسل.');
-    }
-  }
-
-  function openCustomModal(title, streamUrl) {
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('episodesBox').style.display = 'none';
-    const videoContainer = document.getElementById('videoContainer');
-    renderSmartPlayer(streamUrl, videoContainer);
-    document.getElementById('modal').classList.add('show');
-  }
-
   function openModal(item) {
     document.getElementById('modalTitle').textContent = item.title || '';
     const epBox = document.getElementById('episodesBox');
@@ -624,7 +333,7 @@
       return;
     }
 
-    if (url.includes('.m3u8') || url.includes('.ts') || url.includes('live')) {
+    if (url.includes('.m3u8') || url.includes('.ts')) {
       container.innerHTML = `
         <div class="video-watermark">EGY<span>MSL</span></div>
         <video id="hlsVideo" controls autoplay playsinline style="width:100%; height:100%; object-fit:contain; background:#000;"></video>
@@ -768,10 +477,6 @@
 
   window.addEventListener("scroll", () => {
     document.querySelector("#nav").classList.toggle("scrolled", window.scrollY > 40);
-  });
-
-  window.addEventListener('DOMContentLoaded', () => {
-    checkXtreamStatus();
   });
 </script>
 </body>
