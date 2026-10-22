@@ -419,7 +419,7 @@
     const pass = localStorage.getItem('xtream_pass');
 
     if (!host || !user || !pass) {
-      grid.innerHTML = `<div class="empty">يرجى إدخال بيانات الـ Xtream من زر الإعدادات بالأسفل/الأعلى أولاً.</div>`;
+      grid.innerHTML = `<div class="empty">يرجى إدخال بيانات الـ Xtream من زر الإعدادات أولاً.</div>`;
       return;
     }
 
@@ -428,7 +428,7 @@
     if (type === 'series') action = 'get_series';
 
     const rawApi = `${host}/player_api.php?username=${user}&password=${pass}&action=${action}`;
-    const apiTarget = `https://api.allorigins.win/raw?url=${encodeURIComponent(rawApi)}`;
+    const apiTarget = `https://corsproxy.io/?` + encodeURIComponent(rawApi);
 
     try {
       const res = await fetch(apiTarget);
@@ -460,7 +460,6 @@
               const movieUrl = `${host}/movie/${user}/${pass}/${item.stream_id}.${item.container_extension || 'mp4'}`;
               openCustomModal(title, movieUrl);
             } else if (type === 'series') {
-              // جلب تفاصيل المسلسل وحلقاته
               loadSeriesDetails(item.series_id, title);
             }
           };
@@ -481,7 +480,7 @@
     const pass = localStorage.getItem('xtream_pass');
 
     const rawApi = `${host}/player_api.php?username=${user}&password=${pass}&action=get_series_info&series_id=${seriesId}`;
-    const apiTarget = `https://api.allorigins.win/raw?url=${encodeURIComponent(rawApi)}`;
+    const apiTarget = `https://corsproxy.io/?` + encodeURIComponent(rawApi);
 
     try {
       const res = await fetch(apiTarget);
@@ -702,12 +701,12 @@
     document.getElementById('txtLibraryNav').textContent = t.libraryNav;
     document.getElementById('txtLangTitle').textContent = t.langTitle;
     document.getElementById('txtSiteLangLabel').textContent = t.siteLangLabel;
-    document.getElementById('txtCategoryLabel').textContent = t.categoryLabel;
+    document.getElementById('txtCategoryLabel').textContent, t.categoryLabel;
     document.getElementById('btnCatAll').textContent = t.catAll;
     document.getElementById('btnCatMoviesAr').textContent = t.catMoviesAr;
     document.getElementById('btnCatMoviesEn').textContent = t.catMoviesEn;
     document.getElementById('btnCatSeriesAr').textContent = t.catSeriesAr;
-    document.getElementById('btnCatSeriesEn').textContent, t.catSeriesEn;
+    document.getElementById('btnCatSeriesEn').textContent = t.catSeriesEn;
     document.getElementById('txtRecentTitle').textContent = t.recentTitle;
     document.getElementById('txtMainTitle').textContent = t.mainTitle;
     document.getElementById('txtEpSelect').textContent = t.epSelect;
