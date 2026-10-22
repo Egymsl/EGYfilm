@@ -370,8 +370,7 @@
     closeSettingsModal();
     alert('تم حذف بيانات الاشتراك.');
   }
-
-  async function loadXtreamContent() {
+    async function loadXtreamContent() {
     let host = localStorage.getItem('xtream_host');
     const user = localStorage.getItem('xtream_user');
     const pass = localStorage.getItem('xtream_pass');
@@ -385,8 +384,8 @@
     grid.innerHTML = `<div class="empty">جاري جلب القنوات المباشرة من السيرفر...</div>`;
 
     const m3uTarget = `${host}/get.php?username=${user}&password=${pass}&type=m3u`;
-    // ربط الموقع بالسيرفر الأونلاين الجديد على Vercel لتجاوز الحظر تماماً
-    const proxyUrl = `https://eg-yfilm.vercel.app/proxy?url=${encodeURIComponent(m3uTarget)}`;
+    // استخدام بروكسي جاهز ومباشر لتجاوز CORS و 404 نهائياً
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(m3uTarget)}`;
 
     try {
       const res = await fetch(proxyUrl);
@@ -433,7 +432,7 @@
         grid.innerHTML = `<div class="empty">لم يتم العثور على قنوات، تأكد من صحة بيانات السيرفر.</div>`;
       }
     } catch (err) {
-      grid.innerHTML = `<div class="empty">فشل الاتصال بسيرفر Xtream عبر السيرفر الأونلاين.</div>`;
+      grid.innerHTML = `<div class="empty">حدث خطأ أثناء جلب القنوات، يرجى المحاولة مرة أخرى.</div>`;
     }
   }
 
