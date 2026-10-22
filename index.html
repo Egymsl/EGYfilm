@@ -383,56 +383,34 @@
     const grid = document.getElementById('iptvGrid');
     grid.innerHTML = `<div class="empty">جاري جلب القنوات المباشرة من السيرفر...</div>`;
 
-    const m3uTarget = `${host}/get.php?username=${user}&password=${pass}&type=m3u`;
-    // استخدام بروكسي جاهز ومباشر لتجاوز CORS و 404 نهائياً
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(m3uTarget)}`;
+    const rawApi = `${host}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`;
+    const apiTarget = `https://api.allorigins.win/raw?url=${encodeURIComponent(rawApi)}`;
 
     try {
-      const res = await fetch(proxyUrl);
-      const data = await res.text();
+      const res = await fetch(apiTarget);
+      const dataText = await res.text();
+      const channels = JSON.parse(dataText);
 
-      const lines = data.split('\n');
-      const channels = [];
-      let currentTitle = '';
-      let currentLogo = '';
-
-      for (let i = 0; i < lines.length; i++) {
-        let line = lines[i].trim();
-        if (line.startsWith('#EXTINF:')) {
-          const tvgLogoMatch = line.match(/tvg-logo="([^"]*)"/);
-          currentLogo = tvgLogoMatch ? tvgLogoMatch[1] : '';
-          const commaIndex = line.lastIndexOf(',');
-          currentTitle = commaIndex !== -1 ? line.substring(commaIndex + 1).trim() : 'قناة بث مباشر';
-        } else if (line && !line.startsWith('#')) {
-          channels.push({
-            name: currentTitle,
-            logo: currentLogo || 'https://via.placeholder.com/300x450?text=Live+TV',
-            url: line
-          });
-          currentTitle = '';
-          currentLogo = '';
-        }
-      }
-
-      if (channels.length > 0) {
+      if (Array.isArray(channels) && channels.length > 0) {
         grid.innerHTML = '';
         channels.slice(0, 60).forEach(ch => {
+          const streamUrl = `${host}/live/${user}/${pass}/${ch.stream_id}.m3u8`;
           const card = document.createElement('article');
           card.className = 'card';
           card.innerHTML = `
-            <img class="poster" src="${ch.logo}" alt="${ch.name}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'">
+            <img class="poster" src="${ch.stream_icon || 'https://via.placeholder.com/300x450?text=Live+TV'}" alt="${ch.name}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'">
             <span class="badge-live">LIVE</span>
             <div class="card-title">${ch.name}</div>
             <button class="play">▶</button>
           `;
-          card.onclick = () => openCustomModal(ch.name, ch.url);
+          card.onclick = () => openCustomModal(ch.name, streamUrl);
           grid.appendChild(card);
         });
       } else {
-        grid.innerHTML = `<div class="empty">لم يتم العثور على قنوات، تأكد من صحة بيانات السيرفر.</div>`;
+        grid.innerHTML = `<div class="empty">لم يتم العثور على قنوات، تأكد من صحة بيانات الاشتراك.</div>`;
       }
     } catch (err) {
-      grid.innerHTML = `<div class="empty">حدث خطأ أثناء جلب القنوات، يرجى المحاولة مرة أخرى.</div>`;
+      grid.innerHTML = `<div class="empty">تعذر الاتصال بالسيرفر المباشر، تحقق من بيانات الـ Xtream.</div>`;
     }
   }
 
