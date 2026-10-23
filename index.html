@@ -58,9 +58,11 @@
     .play { position: absolute; inset: auto 10px 10px auto; width: 34px; height: 34px; border: 0; border-radius: 50%; background: var(--red); color: #fff; opacity: 0; transition: .2s; font-size: 13px; }
     .card:hover .play { opacity: 1; }
     .empty { padding: 30px; text-align: center; color: #aaa; grid-column: 1 / -1; font-size: 14px; }
+    
+    /* النافذة المنبثقة المعدلة لدعم ملء الشاشة بدون قيود */
     .modal { position: fixed; inset: 0; background: #000d; z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
     .modal.show { display: flex; }
-    .modal-box { max-width: 850px; width: 100%; background: #171717; border-radius: 10px; overflow: hidden; position: relative; max-height: 90vh; display: flex; flex-direction: column; }
+    .modal-box { max-width: 850px; width: 100%; background: #171717; border-radius: 10px; overflow: visible; position: relative; max-height: 90vh; display: flex; flex-direction: column; }
     .modal-body { padding: 20px; overflow-y: auto; max-height: 85vh; }
     .close { position: absolute; top: 12px; left: 12px; border: 0; background: var(--red); color: #fff; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; z-index: 10; }
     
@@ -377,7 +379,7 @@
       if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&fs=1`;
     }
 
-    // تم إضافة صلاحيات ملء الشاشة الكاملة هنا لتعمل على كل السيرفرات والمشغلات
+    // خصائص الـ iframe الشاملة لجميع المتصفحات لتمكين زر Fullscreen
     container.innerHTML = `
       <div class="video-watermark">EGY<span>MSL</span></div>
       <iframe src="${embedUrl}" 
