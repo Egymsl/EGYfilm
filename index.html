@@ -59,24 +59,24 @@
     .card:hover .play { opacity: 1; }
     .empty { padding: 30px; text-align: center; color: #aaa; grid-column: 1 / -1; font-size: 14px; }
     
-    .modal { position: fixed; inset: 0; background: #000d; z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal { position: fixed; inset: 0; background: #000d; z-index: 2000; display: none; align-items: center; justify-content: center; padding: 15px; }
     .modal.show { display: flex; }
-    .modal-box { max-width: 850px; width: 100%; background: #171717; border-radius: 10px; overflow: visible; position: relative; max-height: 90vh; display: flex; flex-direction: column; }
-    .modal-body { padding: 20px; overflow-y: auto; max-height: 85vh; }
+    .modal-box { max-width: 850px; width: 100%; background: #171717; border-radius: 10px; overflow: visible; position: relative; max-height: 95vh; display: flex; flex-direction: column; }
+    .modal-body { padding: 15px; overflow-y: auto; max-height: 90vh; }
     .close { position: absolute; top: 12px; left: 12px; border: 0; background: var(--red); color: #fff; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; z-index: 10; }
     
-    .video-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 8px; overflow: hidden; margin-top: 10px; }
+    .video-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 8px 8px 0 0; overflow: hidden; margin-top: 10px; }
     .video-container iframe, .video-container video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     
-    /* حماية لمنع الضغط على زر الخروج لجوجل درايف أعلى اليمين */
-    .drive-shield { position: absolute; top: 8px; right: 8px; width: 55px; height: 45px; z-index: 2147483646; background: transparent; cursor: default; }
+    /* حماية منسقة لتغطية زر الخروج لجوجل درايف تماماً */
+    .drive-shield { position: absolute; top: 0; left: 0; width: 90px; height: 50px; z-index: 2147483646; background: transparent; cursor: default; }
 
-    .video-watermark { position: absolute; top: 12px; left: 15px; color: #fff; font-weight: 900; font-size: 15px; background: rgba(0, 0, 0, 0.6); padding: 4px 10px; border-radius: 4px; z-index: 2147483647; letter-spacing: -0.5px; pointer-events: none; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); }
+    .video-watermark { position: absolute; top: 12px; right: 15px; color: #fff; font-weight: 900; font-size: 15px; background: rgba(0, 0, 0, 0.6); padding: 4px 10px; border-radius: 4px; z-index: 2147483647; letter-spacing: -0.5px; pointer-events: none; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); }
     .video-watermark span { color: var(--red); }
 
-    /* شريط أزرار تحكم إضافي تحت الفيديو بناءً على طلبك */
-    .custom-video-controls { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px 15px; border-radius: 0 0 8px 8px; margin-top: -2px; }
-    .control-btn { background: var(--red); color: #fff; border: none; padding: 6px 14px; border-radius: 4px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+    /* شريط التحكم السفلي الثابت */
+    .custom-video-controls { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 12px 15px; border-radius: 0 0 8px 8px; border-top: 1px solid #222; }
+    .control-btn { background: var(--red); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(229,9,20,0.4); }
     .control-btn:hover { background: #ff1e2a; }
 
     .episodes-box { margin-top: 15px; background: #111; padding: 12px; border-radius: 6px; }
@@ -165,16 +165,19 @@
         <span style="font-size:13px; color:var(--muted);" id="txtEpSelect">اختر الحلقة / الموسم:</span>
         <div class="episodes-list" id="episodesList"></div>
       </div>
-      <!-- حاوية الفيديو -->
-      <div class="video-container" id="videoContainer">
-        <div class="drive-shield" title="محمي بواسطة Egymsl"></div>
+      
+      <!-- حاوية الفيديو مع دعم بوستر الفيلم -->
+      <div class="video-container" id="videoContainer" style="position:relative;">
+        <div class="drive-shield"></div>
         <div class="video-watermark">EGY<span>MSL</span></div>
       </div>
-      <!-- شريط تحكم سفلي للتكبير والتحكم -->
-      <div class="custom-video-controls" id="customControls" style="display:none;">
-        <span style="font-size: 12px; color: #aaa;">مشغل Egymsl المباشر</span>
-        <button class="control-btn" onclick="toggleFullScreen()">⛶ ملء الشاشة</button>
+
+      <!-- شريط التحكم السفلي الثابت لملء الشاشة والتحكم -->
+      <div class="custom-video-controls" id="customControls">
+        <span style="font-size: 12px; color: #aaa; font-weight: 600;">مشغل Egymsl المحمي</span>
+        <button class="control-btn" onclick="makeFullscreen()">⛶ ملء الشاشة</button>
       </div>
+
     </div>
   </div>
 </div>
@@ -251,7 +254,6 @@
     rawData = [];
     snapshot.forEach((doc) => rawData.push({ id: doc.id, ...doc.data() }));
     
-    // ربط فيلم Toy Story 5 بالبوستر الرسمي ورابط الدرايف المباشر
     if (!rawData.some(item => item.title && item.title.includes('Toy Story 5'))) {
       rawData.push({
         id: 'toy-story-5-drive',
@@ -344,7 +346,7 @@
         btn.onclick = () => {
           document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          renderSmartPlayer(ep.url, videoContainer);
+          renderSmartPlayer(ep.url, videoContainer, item.poster);
         };
         epList.appendChild(btn);
       });
@@ -353,17 +355,15 @@
       epBox.style.display = 'none';
     }
 
-    renderSmartPlayer(targetUrl, videoContainer);
+    renderSmartPlayer(targetUrl, videoContainer, item.poster);
     document.getElementById('modal').classList.add('show');
   }
 
-  function renderSmartPlayer(url, container) {
+  function renderSmartPlayer(url, container, posterUrl) {
     if (hlsPlayer) {
       hlsPlayer.destroy();
       hlsPlayer = null;
     }
-
-    const customControls = document.getElementById('customControls');
 
     if (!url) {
       container.innerHTML = `
@@ -371,7 +371,6 @@
         <div class="video-watermark">EGY<span>MSL</span></div>
         <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:14px;">عذراً، الرابط غير متوفر حالياً.</div>
       `;
-      customControls.style.display = 'none';
       return;
     }
 
@@ -384,16 +383,15 @@
       }
       if (fileId) {
         container.innerHTML = `
-          <div class="drive-shield" title="محمي"></div>
+          <div class="drive-shield"></div>
           <div class="video-watermark">EGY<span>MSL</span></div>
-          <iframe id="targetIframe" src="https://drive.google.com/file/d/${fileId}/preview" 
+          <iframe id="activeVideoFrame" src="https://drive.google.com/file/d/${fileId}/preview" 
                   allow="autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope" 
                   allowfullscreen 
                   webkitallowfullscreen 
                   mozallowfullscreen 
                   style="width:100%; height:100%; border:none;"></iframe>
         `;
-        customControls.style.display = 'flex';
         return;
       }
     }
@@ -402,9 +400,8 @@
       container.innerHTML = `
         <div class="drive-shield"></div>
         <div class="video-watermark">EGY<span>MSL</span></div>
-        <video id="hlsVideo" controls autoplay playsinline style="width:100%; height:100%; object-fit:contain; background:#000;"></video>
+        <video id="hlsVideo" poster="${posterUrl || ''}" controls autoplay playsinline style="width:100%; height:100%; object-fit:contain; background:#000;"></video>
       `;
-      customControls.style.display = 'none';
       const video = document.getElementById('hlsVideo');
       if (Hls.isSupported()) {
         hlsPlayer = new Hls();
@@ -420,9 +417,8 @@
       container.innerHTML = `
         <div class="drive-shield"></div>
         <div class="video-watermark">EGY<span>MSL</span></div>
-        <video src="${url}" controls autoplay playsinline style="width:100%; height:100%; object-fit:contain; background:#000;"></video>
+        <video id="mp4Video" poster="${posterUrl || ''}" src="${url}" controls autoplay playsinline style="width:100%; height:100%; object-fit:contain; background:#000;"></video>
       `;
-      customControls.style.display = 'none';
       return;
     }
 
@@ -438,18 +434,20 @@
     container.innerHTML = `
       <div class="drive-shield"></div>
       <div class="video-watermark">EGY<span>MSL</span></div>
-      <iframe src="${embedUrl}" 
+      <iframe id="activeVideoFrame" src="${embedUrl}" 
               allow="autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope" 
               allowfullscreen 
               webkitallowfullscreen 
               mozallowfullscreen 
               style="width:100%; height:100%; border:none;"></iframe>
     `;
-    customControls.style.display = 'flex';
   }
 
-  function toggleFullScreen() {
-    const iframe = document.getElementById('targetIframe') || document.querySelector('.video-container iframe');
+  function makeFullscreen() {
+    const container = document.getElementById('videoContainer');
+    const iframe = document.getElementById('activeVideoFrame');
+    const video = document.getElementById('hlsVideo') || document.getElementById('mp4Video');
+
     if (iframe) {
       if (iframe.requestFullscreen) {
         iframe.requestFullscreen();
@@ -457,6 +455,18 @@
         iframe.webkitRequestFullscreen();
       } else if (iframe.msRequestFullscreen) {
         iframe.msRequestFullscreen();
+      } else {
+        if (container.requestFullscreen) {
+          container.requestFullscreen();
+        } else if (container.webkitRequestFullscreen) {
+          container.webkitRequestFullscreen();
+        }
+      }
+    } else if (video) {
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitEnterFullscreen) {
+        video.webkitEnterFullscreen();
       }
     }
   }
@@ -467,7 +477,6 @@
       hlsPlayer = null;
     }
     document.getElementById('videoContainer').innerHTML = `<div class="drive-shield"></div><div class="video-watermark">EGY<span>MSL</span></div>`;
-    document.getElementById('customControls').style.display = 'none';
     document.getElementById('modal').classList.remove('show');
   }
 
@@ -556,7 +565,7 @@
     document.getElementById('txtRecentTitle').textContent = t.recentTitle;
     document.getElementById('txtMainTitle').textContent = t.mainTitle;
     document.getElementById('txtEpSelect').textContent = t.epSelect;
-    document.getElementById('txtFooter').textContent, t.footer;
+    document.getElementById('txtFooter').textContent = t.footer;
     applyFilters();
   }
 
