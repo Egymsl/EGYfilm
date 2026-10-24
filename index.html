@@ -68,8 +68,8 @@
     .video-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 8px 8px 0 0; overflow: hidden; margin-top: 10px; }
     .video-container iframe, .video-container video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     
-    /* درع حماية يغطي زر جوجل درايف في أقصى اليمين فوق تماماً لمنع الخروج للموقع الخارجي */
-    .drive-shield { position: absolute; top: 0; right: 0; width: 85px; height: 50px; z-index: 2147483646; background: transparent; cursor: default; }
+    /* درع حماية يغطي زر جوجل درايف في أقصى اليمين فوق تماماً بمنع الخروج للموقع الخارجي */
+    .drive-shield { position: absolute; top: 0; right: 0; width: 95px; height: 55px; z-index: 2147483646; background: transparent; cursor: default; }
 
     .video-watermark { position: absolute; top: 12px; left: 15px; color: #fff; font-weight: 900; font-size: 15px; background: rgba(0, 0, 0, 0.6); padding: 4px 10px; border-radius: 4px; z-index: 2147483647; letter-spacing: -0.5px; pointer-events: none; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); }
     .video-watermark span { color: var(--red); }
@@ -166,7 +166,7 @@
         <div class="episodes-list" id="episodesList"></div>
       </div>
       
-      <!-- حاوية الفيديو مع عرض بوستر الفيلم كخلفية أثناء التحميل -->
+      <!-- حاوية الفيديو -->
       <div class="video-container" id="videoContainer" style="position:relative;">
         <div class="drive-shield" title="محمي بواسطة Egymsl"></div>
         <div class="video-watermark">EGY<span>MSL</span></div>
@@ -254,14 +254,15 @@
     rawData = [];
     snapshot.forEach((doc) => rawData.push({ id: doc.id, ...doc.data() }));
     
-    if (!rawData.some(item => item.title && item.title.includes('Toy Story 5'))) {
+    // إضافة فيلم Toy Story 5 بالعربي وتحت قسم الأفلام العربية بناءً على طلبك مع البوستر الرسمي
+    if (!rawData.some(item => item.title && (item.title.includes('Toy Story 5') || item.title.includes('توستوري')))) {
       rawData.push({
-        id: 'toy-story-5-drive',
-        title: 'Toy Story 5',
+        id: 'toy-story-5-arabic',
+        title: 'توستوري 5 (Toy Story 5)',
         poster: 'https://m.media-amazon.com/images/M/MV5BZmM0NGYwYTItNDcxMS00MjI3LWE3NWQtMGNlNWMzNDFhMGViXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg',
         type: 'movie',
-        category: 'movie_en',
-        lang: 'en',
+        category: 'movie_ar',
+        lang: 'ar',
         videoUrl: 'https://drive.google.com/file/d/1bEH1BZxVSuP6OcqHY72oswKT_OFq-3de/view'
       });
     }
@@ -334,13 +335,6 @@
     const epList = document.getElementById('episodesList');
     const videoContainer = document.getElementById('videoContainer');
     
-    // وضع بوستر الفيلم كخلفية مؤقتة أثناء تحميل المشغل
-    if (item.poster) {
-      videoContainer.style.backgroundImage = `url('${item.poster}')`;
-      videoContainer.style.backgroundSize = 'cover';
-      videoContainer.style.backgroundPosition = 'center';
-    }
-
     epList.innerHTML = '';
     let targetUrl = item.videoUrl || '';
 
@@ -397,7 +391,7 @@
                   allowfullscreen 
                   webkitallowfullscreen 
                   mozallowfullscreen 
-                  style="width:100%; height:100%; border:none; background:transparent;"></iframe>
+                  style="width:100%; height:100%; border:none;"></iframe>
         `;
         return;
       }
@@ -450,31 +444,23 @@
     `;
   }
 
+  // دالة ذكية لإجبار المتصفح على تكبير المشغل (تتجاوز قيود الموبايل بقدر الإمكان)
   function makeFullscreen() {
     const container = document.getElementById('videoContainer');
     const iframe = document.getElementById('activeVideoFrame');
     const video = document.getElementById('hlsVideo') || document.getElementById('mp4Video');
 
-    if (iframe) {
-      if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-      } else if (iframe.webkitRequestFullscreen) {
-        iframe.webkitRequestFullscreen();
-      } else if (iframe.msRequestFullscreen) {
-        iframe.msRequestFullscreen();
-      } else {
-        if (container.requestFullscreen) {
-          container.requestFullscreen();
-        } else if (container.webkitRequestFullscreen) {
-          container.webkitRequestFullscreen();
-        }
-      }
-    } else if (video) {
-      if (video.requestFullscreen) {
-        video.requestFullscreen();
-      } else if (video.webkitEnterFullscreen) {
-        video.webkitEnterFullscreen();
-      }
+    // محاولة تكبير الحاوية بالكامل على الموبايل لتعويض قيود الـ iframe
+    const target = container.requestFullscreen ? container : (container.webkitRequestFullscreen ? container : iframe);
+
+    if (target && target.requestFullscreen) {
+      target.requestFullscreen().catch(err => {
+        console.log("Fullscreen blocked or not supported", err);
+      });
+    } else if (target && target.webkitRequestFullscreen) {
+      target.webkitRequestFullscreen();
+    } else if (video && video.webkitEnterFullscreen) {
+      video.webkitEnterFullscreen();
     }
   }
 
